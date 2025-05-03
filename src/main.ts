@@ -8,7 +8,8 @@ import VueApexCharts from "vue3-apexcharts";
 import { QuillEditor } from "@vueup/vue-quill";
 import Vue3Prism from "vue3-prism/lib/Vue3Prism.common.js";
 
-import "bootstrap/dist/css/bootstrap.css";
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import "bootstrap-vue-next/dist/bootstrap-vue-next.css";
 import "swiper/css";
 import "swiper/css/bundle";

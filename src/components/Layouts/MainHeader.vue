@@ -18,17 +18,17 @@
           >
             <i class="flaticon-menu-3" style="color: white;"></i>
           </button>
-        
         </div>
       </div>
       <div class="col-xl-8 col-lg-7 col-md-6">
         <div
           class="header-right-side d-flex align-items-center justify-content-center justify-content-md-end"
         >
-          <div class="dropdown profile-dropdown">
+          <div class="dropdown">
             <button
-              class="dropdown-toggle text-start fs-14 text-black-emphasis d-flex align-items-center p-0 position-relative bg-transparent border-0 transition lh-1"
+              class="btn dropdown-toggle text-start fs-14 text-black-emphasis d-flex align-items-center p-0 position-relative bg-transparent border-0 transition lh-1"
               type="button"
+              id="dropdownMenuButton1"
               data-bs-toggle="dropdown"
               aria-expanded="false"
             >
@@ -44,52 +44,16 @@
                 <span class="text-body-emphasis fw-semibold fs-13" style="color: white;">Admin</span>
               </span>
             </button>
-            <div
-              class="dropdown-menu rounded-0 bg-white border-0 start-auto end-0"
+            <ul
+              class="dropdown-menu dropdown-menu-end"
+              aria-labelledby="dropdownMenuButton1"
             >
-              <ul class="ps-0 mb-0 list-unstyled dropdown-body">
-                <li
-                  class="text-body-secondary fw-semibold transition position-relative"
-                >
-                  <i class="flaticon-user-2"></i>
-                  My Account
-                  <router-link
-                    to="/profile"
-                    class="d-block position-absolute start-0 top-0 end-0 bottom-0 text-decoration-none"
-                  ></router-link>
-                </li>
-                <li
-                  class="text-body-secondary fw-semibold transition position-relative"
-                >
-                  <i class="flaticon-setting"></i>
-                  Settings
-                  <router-link
-                    to="/profile-settings"
-                    class="d-block position-absolute start-0 top-0 end-0 bottom-0 text-decoration-none"
-                  ></router-link>
-                </li>
-                <li
-                  class="text-body-secondary fw-semibold transition position-relative"
-                >
-                  <i class="flaticon-warning"></i>
-                  Support
-                  <router-link
-                    to="/support-desk-card"
-                    class="d-block position-absolute start-0 top-0 end-0 bottom-0 text-decoration-none"
-                  ></router-link>
-                </li>
-                <li
-                  class="text-body-secondary fw-semibold transition position-relative"
-                >
-                  <i class="flaticon-logout"></i>
-                  Logout
-                  <router-link
-                    to="/logout"
-                    class="d-block position-absolute start-0 top-0 end-0 bottom-0 text-decoration-none"
-                  ></router-link>
-                </li>
-              </ul>
-            </div>
+              <li>
+                <router-link class="dropdown-item text-body-secondary fw-semibold" to="/login">
+                  <i class="flaticon-logout me-2"></i>Logout
+                </router-link>
+              </li>
+            </ul>
           </div>
         </div>
       </div>
@@ -99,14 +63,10 @@
 
 <script lang="ts">
 import { defineComponent, ref, onMounted } from "vue";
-//import LightDarkSwtichBtn from "./LightDarkSwtichBtn.vue";
 import stateStore from "../../utils/store";
 
 export default defineComponent({
   name: "MainHeader",
-  components: {
-    //LightDarkSwtichBtn,
-  },
   setup() {
     const stateStoreInstance = stateStore;
     const isSticky = ref(false);

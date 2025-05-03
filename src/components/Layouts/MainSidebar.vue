@@ -38,7 +38,7 @@
           </router-link>
         </li>
         <li class="sidebar-nav-item">
-          <router-link to="/changelog" class="sidebar-nav-link d-block">
+          <router-link to="/Oportunidad/OportunidadComponent" class="sidebar-nav-link d-block">
             <i class="flaticon-support"></i>
             <span class="title">Seguimiento de Oportunidad</span>
           </router-link>

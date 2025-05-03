@@ -2,11 +2,12 @@ import { createWebHistory, createRouter, RouteRecordRaw } from "vue-router";
 
 import FileManagerPage from "../pages/FileManagerPage.vue";
 import ChangelogPage from "../pages/ChangelogPage.vue";
-import LoginPage from "../pages/Authentication/LoginPage.vue";
+import LoginPage from "@/modules/Auth/pages/LoginPage.vue";
 import ErrorPage from "../pages/ErrorPage.vue";
 import BlankPage from "../pages/BlankPage.vue";
 import LogoutPage from "../pages/LogoutPage.vue";
 import clienteRoutes from "@/modules/Clientes/router";
+import oportunidadRoutes from "@/modules/Oportunidades/router";
 import MainLayout from "@/components/Layouts/MainLayout.vue"; 
 
 
@@ -33,6 +34,7 @@ const routes: Array<RouteRecordRaw> = [
         component: FileManagerPage
       },
       ...clienteRoutes, // Rutas de cliente anidadas
+      ...oportunidadRoutes,
       {
         path: "/blank-page",
         name: "BlankPage",

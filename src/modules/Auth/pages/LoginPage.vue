@@ -1,4 +1,20 @@
+<script lang="ts"  setup>
+import { useRouter, useRoute } from "vue-router";
+const router = useRouter();
+
+
+const ingresar = () => {
+    router.push({ path: "/" });
+  };
+
+</script>
+
 <template>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
   <div class="row justify-content-center">
     <div class="col-md-10 col-lg-8 col-xl-9 col-xxl-8 col-xxxl-6">
       <div class="card mb-25 border-0 rounded-0 bg-white authentication-card">
@@ -31,6 +47,7 @@
             <button
               class="default-btn transition border-0 fw-medium text-white rounded-1 fs-md-15 fs-lg-16 bg-success d-block w-100"
               type="submit"
+              @click="ingresar()"
             >
               INGRESAR
             </button>
@@ -42,8 +59,3 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: "LoginForm",
-};
-</script>

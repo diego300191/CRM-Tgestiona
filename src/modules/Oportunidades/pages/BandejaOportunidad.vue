@@ -1,8 +1,14 @@
 
 <script lang="ts" setup >
 import { ref } from "vue";
-import AddClienteModal from "@/modules/Clientes/pages/AddClienteModal.vue";
 import stateStore from "@/utils/store";
+import { useRouter, useRoute } from "vue-router";
+const router = useRouter();
+
+
+const AddOportunidad = () => {
+    router.push({ name: "Oportunidad-addOportunidad" });
+  };
 
 const stateStoreInstance = stateStore;
 
@@ -21,7 +27,7 @@ const stateStoreInstance = stateStore;
                   <input
                     type="text"
                     class="form-control shadow-none text-black rounded-0 border-0"
-                    placeholder="Buscar Cliente"
+                    placeholder="Buscar Oportunidad"
                   />
                   <button
                     type="submit"
@@ -36,9 +42,9 @@ const stateStoreInstance = stateStore;
                 <button
                   class="default-btn position-relative transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-12 pb-md-12 ps-md-30 pe-md-30 rounded-1 bg-success fs-md-15 fs-lg-16 d-inline-block me-10 mb-10 mb-lg-0"
                   type="button"
-                @click="stateStoreInstance.createNewModal"
+                @click="AddOportunidad()"
                 >
-                  Nuevo Cliente
+                  Nuevo Oportunidad
                   <i class="flaticon-plus position-relative ms-5 fs-12"></i>
                 </button>
                 <!-- <button
@@ -398,7 +404,6 @@ const stateStoreInstance = stateStore;
               </div>
             </div>
           </div>
-          <AddClienteModal />
       </div>
     </div>
   </template>
