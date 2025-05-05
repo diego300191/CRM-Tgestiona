@@ -11,7 +11,7 @@ const UpdateOportunidades = (val) => {
 };
 const listbandejaOportunidades = () => {
   router.push({
-    name: "Oportunidad-listOportunidad",
+    name: "Oportunidad-OportunidadComponent",
   });
 };
 </script>

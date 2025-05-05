@@ -66,37 +66,37 @@ const stateStoreInstance = stateStore;
                         scope="col"
                         class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
                       >
-                        NOMBRES 
+                        EMPRESA 
                       </th>
                       <th
                         scope="col"
                         class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
                       >
-                        EMPRESA
+                        ESTADO
                       </th>
                       <th
                         scope="col"
                         class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
                       >
-                        CARGOS
+                        SUBESTADO
                       </th>
                       <th
                         scope="col"
                         class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
                       >
-                        EMAIL
+                        BACK
+                      </th>
+                      <th
+                        scope="col"
+                        class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
+                      >
+                        FRONT
                       </th>
                       <th
                         scope="col"
                         class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
                       >
                         TELEFONO
-                      </th>
-                      <th
-                        scope="col"
-                        class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-                      >
-                        SECTOR
                       </th>
                       <th
                         scope="col"
@@ -124,63 +124,19 @@ const stateStoreInstance = stateStore;
                         </div>
                       </th>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        K. Hong
+                        Vigente
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        cargo 1
+                        EN ELABORACIÓN DE PROPUESTA
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        hong3215@gmail.com
+                        YULEISY
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        +1-134-345-5926
+                        CINDY
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        ENERGÍA
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        CLIENTE ACTUAL
-                      </td>
-                      <td
-                        class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
-                      >
-                          <button
-                            class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                            type="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                            @click="stateStoreInstance.createNewModal"
-                          >
-                            <i class="flaticon-dots"></i>
-                          </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th
-                        class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
-                      >
-                        <div class="d-flex align-items-center">
-                          <div
-                            class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16"
-                          >
-                          Rola Pharmaceuticals
-                          </div>
-                        </div>
-                      </th>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        K. Hong
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        cargo 1
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        hong3215@gmail.com
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        +1-134-345-5926
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        ENERGÍA
+                        +51 99999999
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
                         CLIENTE ACTUAL
@@ -212,63 +168,19 @@ const stateStoreInstance = stateStore;
                         </div>
                       </th>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        K. Hong
+                        Vigente
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        cargo 1
+                        EN ELABORACIÓN DE PROPUESTA
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        hong3215@gmail.com
+                        YULEISY
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        +1-134-345-5926
+                        CINDY
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        ENERGÍA
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        CLIENTE ACTUAL
-                      </td>
-                      <td
-                        class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
-                      >
-                          <button
-                            class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                            type="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                            @click="stateStoreInstance.createNewModal"
-                          >
-                            <i class="flaticon-dots"></i>
-                          </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th
-                        class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
-                      >
-                        <div class="d-flex align-items-center">
-                          <div
-                            class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16"
-                          >
-                          Rola Pharmaceuticals
-                          </div>
-                        </div>
-                      </th>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        K. Hong
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        cargo 1
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        hong3215@gmail.com
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        +1-134-345-5926
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        ENERGÍA
+                        +51 99999999
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
                         CLIENTE ACTUAL
@@ -300,19 +212,19 @@ const stateStoreInstance = stateStore;
                         </div>
                       </th>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        K. Hong
+                        Vigente
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        cargo 1
+                        EN ELABORACIÓN DE PROPUESTA
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        hong3215@gmail.com
+                        YULEISY
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        +1-134-345-5926
+                        CINDY
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        ENERGÍA
+                        +51 99999999
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
                         CLIENTE ACTUAL
@@ -344,19 +256,107 @@ const stateStoreInstance = stateStore;
                         </div>
                       </th>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        K. Hong
+                        Vigente
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        cargo 1
+                        EN ELABORACIÓN DE PROPUESTA
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        hong3215@gmail.com
+                        YULEISY
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        +1-134-345-5926
+                        CINDY
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        ENERGÍA
+                        +51 99999999
+                      </td>
+                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                        CLIENTE ACTUAL
+                      </td>
+                      <td
+                        class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
+                      >
+                          <button
+                            class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                            @click="stateStoreInstance.createNewModal"
+                          >
+                            <i class="flaticon-dots"></i>
+                          </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th
+                        class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
+                      >
+                        <div class="d-flex align-items-center">
+                          <div
+                            class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16"
+                          >
+                          Rola Pharmaceuticals
+                          </div>
+                        </div>
+                      </th>
+                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                        Vigente
+                      </td>
+                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                        EN ELABORACIÓN DE PROPUESTA
+                      </td>
+                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                        YULEISY
+                      </td>
+                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                        CINDY
+                      </td>
+                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                        +51 99999999
+                      </td>
+                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                        CLIENTE ACTUAL
+                      </td>
+                      <td
+                        class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
+                      >
+                          <button
+                            class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false"
+                            @click="stateStoreInstance.createNewModal"
+                          >
+                            <i class="flaticon-dots"></i>
+                          </button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <th
+                        class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
+                      >
+                        <div class="d-flex align-items-center">
+                          <div
+                            class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16"
+                          >
+                          Rola Pharmaceuticals
+                          </div>
+                        </div>
+                      </th>
+                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                        Vigente
+                      </td>
+                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                        EN ELABORACIÓN DE PROPUESTA
+                      </td>
+                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                        YULEISY
+                      </td>
+                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                        CINDY
+                      </td>
+                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
+                        +51 99999999
                       </td>
                       <td class="shadow-none lh-1 fw-medium text-black-emphasis">
                         CLIENTE ACTUAL
