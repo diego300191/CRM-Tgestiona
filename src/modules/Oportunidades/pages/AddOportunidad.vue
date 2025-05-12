@@ -147,24 +147,6 @@ const UpdateOportunidades = (val) => {
 
         <div class="row g-3">
           <div class="col-md-4">
-            <label for="validationCustomFront" class="form-label fw-medium"
-              >FRONT</label
-            >
-            <select
-              class="form-select shadow-none fs-md-15 text-black"
-              id="validationCustomFront"
-              required
-            >
-              <option selected disabled value="">Seleccionar...</option>
-              <option>Opción 1</option>
-              <option>Opción 2</option>
-            </select>
-            <div class="invalid-feedback">
-              Por favor selecciona un front válido.
-            </div>
-          </div>
-
-          <div class="col-md-4">
             <label for="validationCustomBack" class="form-label fw-medium"
               >PERSONA ENCARGADA</label
             >
@@ -199,9 +181,6 @@ const UpdateOportunidades = (val) => {
               Por favor selecciona una opción válida.
             </div>
           </div>
-        </div>
-
-        <div class="row g-3">
           <div class="col-md-4">
             <label for="validationCustomFront" class="form-label fw-medium"
               >SUBTIPO SOLUCIÓN FM</label
@@ -219,6 +198,9 @@ const UpdateOportunidades = (val) => {
               Por favor selecciona un front válido.
             </div>
           </div>
+        </div>
+
+        <div class="row g-3">
           <div class="col-md-4">
             <label for="buscarCliente" class="form-label fw-medium"
               >IMPORTE</label
@@ -243,10 +225,8 @@ const UpdateOportunidades = (val) => {
               />
             </div>
           </div>
-        </div>
-        <div class="row g-3">
           <div class="col-md-4">
-            <div class="mb-15 mb-md-20">
+            <div>
               <label
                 for="basicFormControlTextarea1"
                 class="form-label fw-medium text-black"
@@ -260,9 +240,10 @@ const UpdateOportunidades = (val) => {
               ></textarea>
             </div>
           </div>
-
+        </div>
+        <div class="row g-3">
           <div class="col-md-4">
-            <div class="mb-15 mb-md-20">
+            <div >
               <label
                 for="basicFormControlTextarea1"
                 class="form-label fw-medium text-black"

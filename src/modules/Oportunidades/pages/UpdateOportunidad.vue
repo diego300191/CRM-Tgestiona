@@ -66,7 +66,43 @@ const listbandejaOportunidades = () => {
           {{ estado }}
         </button>
       </div>
-      <div class="content">
+     
+      <!-- Sistema de pestañas -->
+      <ul class="nav nav-tabs mb-4" id="oportunidadTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="datos-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#datos-content"
+            type="button"
+            role="tab"
+            aria-controls="datos-content"
+            aria-selected="true"
+          >
+            Datos - Seguimiento
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="horas-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#horas-content"
+            type="button"
+            role="tab"
+            aria-controls="horas-content"
+            aria-selected="false"
+          >
+            Historial de Horas
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="oportunidadTabsContent">
+        <!-- Pestaña Datos - Seguimiento -->
+        <div class="tab-pane fade show active" id="datos-content" role="tabpanel" aria-labelledby="datos-tab">
+          <div class="content">
         <div class="accordion accordion-flush" id="accordionFlushExample">
           <div class="accordion-item">
             <h2 class="accordion-header">
@@ -204,23 +240,6 @@ const listbandejaOportunidades = () => {
 
                   <!-- Tercera fila -->
                   <div class="row g-3 mb-3">
-                    <div class="col-md-4">
-                      <label for="front" class="form-label fw-medium"
-                        >FRONT</label
-                      >
-                      <select
-                        class="form-select shadow-none fs-md-15 text-black"
-                        id="front"
-                        disabled
-                      >
-                        <option selected disabled value="">
-                          Seleccionar...
-                        </option>
-                        <option>Opción 1</option>
-                        <option>Opción 2</option>
-                      </select>
-                    </div>
-
                     <div class="col-md-4">
                       <label for="personaEncargada" class="form-label fw-medium"
                         >PERSONA ENCARGADA</label
@@ -383,17 +402,13 @@ const listbandejaOportunidades = () => {
                       <label for="fuenteOrigen" class="form-label fw-medium"
                         >TIPO</label
                       >
-                      <select
-                        class="form-select shadow-none fs-md-15 text-black"
-                        id="fuenteOrigen"
-                        required
-                      >
-                        <option selected disabled value="">
-                          Seleccionar...
-                        </option>
-                        <option>Opción 1</option>
-                        <option>Opción 2</option>
-                      </select>
+                      <div class="input-group">
+              <input
+                type="text"
+                class="form-control shadow-none fs-md-15 text-black"
+                id="buscarCliente"
+              />
+            </div>
                     </div>
 
                     <div class="col-md-4">
@@ -505,6 +520,78 @@ const listbandejaOportunidades = () => {
                     </div>
                   </div>
                 </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+        </div>
+
+        <!-- Pestaña Historial de Horas -->
+        <div class="tab-pane fade" id="horas-content" role="tabpanel" aria-labelledby="horas-tab">
+          <div class="card border-0 rounded-0 bg-white">
+            <div class="card-body p-20 p-md-25">
+              <h5 class="card-title fw-bold mb-15 mb-md-20">Registro de Horas</h5>
+              
+              <!-- Formulario para agregar horas -->
+              <div class="row g-3 mb-4">
+                <div class="col-md-3">
+                  <label class="form-label fw-medium">Fecha</label>
+                  <input type="date" class="form-control shadow-none">
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-medium">Horas</label>
+                  <input type="number" class="form-control shadow-none" placeholder="0.00">
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-medium">Descripción</label>
+                  <input type="text" class="form-control shadow-none" placeholder="Descripción de la actividad">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                  <button class="btn btn-success">Agregar</button>
+                </div>
+              </div>
+              
+              <!-- Tabla de historial -->
+              <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                  <thead>
+                    <tr>
+                      <th>Fecha</th>
+                      <th>Horas</th>
+                      <th>Descripción</th>
+                      <th>Usuario</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>15/05/2023</td>
+                      <td>2.50</td>
+                      <td>Reunión con cliente</td>
+                      <td>Juan Pérez</td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-primary me-2">Editar</button>
+                        <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td>14/05/2023</td>
+                      <td>4.00</td>
+                      <td>Elaboración de propuesta</td>
+                      <td>María Gómez</td>
+                      <td>
+                        <button class="btn btn-sm btn-outline-primary me-2">Editar</button>
+                        <button class="btn btn-sm btn-outline-danger">Eliminar</button>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              
+              <!-- Resumen total -->
+              <div class="mt-4 text-end">
+                <h5>Total de horas registradas: <strong>6.50</strong></h5>
               </div>
             </div>
           </div>
