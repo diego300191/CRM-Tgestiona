@@ -4,14 +4,14 @@ import api from "@/api/Api";
 import type { AxiosResponse } from "axios";
 
 // Define interfaces para los tipos de datos
-interface Almacen {
+interface Cliente {
   id?: number;
   // Agrega aquí todas las propiedades de un almacén
   [key: string]: any;
 }
 
 interface PaginationData {
-  data: Almacen[];
+  data: Cliente[];
   totalPages: number;
   totalRecords: number;
 }
@@ -32,12 +32,12 @@ export const useClienteStore = defineStore(
     // Estado tipado
     const currentPages = ref<number>(1);
     const totalPages = ref<number>(0);
-    const almaceneslist = ref<Almacen[]>([]);
+    const clienteslist = ref<Cliente[]>([]);
     const totalRegister = ref<number>(0);
 
     // Acciones
-    const setAlmacenes = (newAlmacenes: Almacen[]): void => {
-      almaceneslist.value = newAlmacenes;
+    const setClientes = (newClientes: Cliente[]): void => {
+      clienteslist.value = newClientes;
     };
 
     const setPage = (page: number): void => {
@@ -46,7 +46,7 @@ export const useClienteStore = defineStore(
       currentPages.value = page;
     };
 
-    const saveAlmacen = async (valFormEmpresa: ValFormEmpresa, Tipo: number): Promise<any> => {
+    const saveCliente = async (valFormEmpresa: ValFormEmpresa, Tipo: number): Promise<any> => {
       try {
         const endpoint = Tipo === 1 ? "/api/admin/Almacen" : "/api/admin/Almacen";
         const method = Tipo === 1 ? api.post : api.put;
@@ -60,11 +60,11 @@ export const useClienteStore = defineStore(
 
     const BusquedaPaginado = async (infoFiltroBusqueda: InfoFiltroBusqueda): Promise<void> => {
       try {
-        almaceneslist.value = [];
+        clienteslist.value = [];
         const { data }: AxiosResponse<PaginationData> = await api.post("/api/admin/Almacen/Paginado", {
           ...infoFiltroBusqueda,
         });
-        almaceneslist.value = data.data;
+        clienteslist.value = data.data;
         totalPages.value = data.totalPages;
         totalRegister.value = data.totalRecords;
       } catch (error) {
@@ -73,29 +73,19 @@ export const useClienteStore = defineStore(
       }
     };
 
-    const getAlmacen = async (id: number): Promise<Almacen> => {
-      try {
-        const { data }: AxiosResponse<Almacen> = await api.get(`/api/admin/Almacen/${id}`);
-        return data;
-      } catch (error) {
-        console.error(`Error al obtener almacén con ID ${id}:`, error);
-        throw error;
-      }
-    };
-
     return {
       // State
       currentPages,
       totalPages,
-      almaceneslist,
+      clienteslist,
       totalRegister,
 
       // Actions
-      setAlmacenes,
+      setClientes,
       setPage,
-      saveAlmacen,
+      saveCliente,
       BusquedaPaginado,
-      getAlmacen,
+      
     };
   }
 );

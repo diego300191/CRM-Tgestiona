@@ -1,5 +1,5 @@
-import { ref, Ref } from "vue";
-//import { useQuery } from "@tanstack/vue-query";
+import { ref, Ref, watch } from "vue";
+import { useQuery } from "@tanstack/vue-query";
 import router from "@/router";
 import { storeToRefs } from "pinia";
 import { useClienteStore } from "@/modules/Clientes/store/useClienteStore";
@@ -14,7 +14,7 @@ interface Empresa {
   [key: string]: any;
 }
 
-interface Almacen {
+interface Cliente {
   id: number;
   idEmpresa: number;
   idTipoSucursal: number;
@@ -26,15 +26,17 @@ interface Almacen {
   [key: string]: any;
 }
 
-interface InfoAlmacen {
+interface InfoCliente {
   id: number;
+  nombres: string;
+  empresa: string;
+  cargos: string;
+  email: string;
+  telefonos: string;
+  selectedsector: number;
+  selectedFront: number;
+  tipoCliente: string;
   activo: boolean;
-  idEmpresa: number;
-  idTipoSucursal: number;
-  nombre: string;
-  telefono: string;
-  direccion: string;
-  codigoEstablecimiento: string;
 }
 
 interface ApiResponse {
@@ -44,7 +46,7 @@ interface ApiResponse {
 }
 
 interface PaginationResponse {
-  data: Almacen[];
+  data: Cliente[];
   totalPages: number;
   totalRecords: number;
   [key: string]: any;
@@ -53,7 +55,6 @@ interface PaginationResponse {
 interface InfoFiltro {
   page: number;
   size: number;
-  idsEmpresa: string;
   nombre: string | null;
 }
 
@@ -78,12 +79,17 @@ interface InfoFiltro {
 //   });
 // };
 
+interface FrontOption {
+  value: number;
+  label: string;
+}
+
 // Stores
 const store = useClienteStore();
 //const storeAuth = useAuthStore();
 //const listaEmpresas: Ref<Empresa[]> = ref(storeAuth.listaEmpresas);
 const nombreComboDinamico = ref<string>("Tipo Sucursal");
-const nombreAlmacen = ref<string | null>(null);
+const nombreBusqueda = ref<string | null>(null);
 const placeholder = ref<string>("Tipo Almacén");
 const selectedEmpresas = ref<Empresa[]>();
 //const idEmpresaSession = localStorage.getItem("IdEmpresa");
@@ -94,8 +100,8 @@ const selectedEmpresas = ref<Empresa[]>();
 // );
 // selectedEmpresas.value = idempresadefault;
 
-// Función para obtener almacenes paginados
-const getAlmacenes = async (page: number): Promise<Almacen[]> => {
+// Función para obtener Clientees paginados
+const getClientes = async (page: number): Promise<Cliente[]> => {
   await new Promise((resolve) => {
     setTimeout(() => resolve(true), 1000);
   });
@@ -103,14 +109,14 @@ const getAlmacenes = async (page: number): Promise<Almacen[]> => {
   const size = 10;
   const { totalPages, totalRegister } = storeToRefs(store);
 
-  const { data }: AxiosResponse<PaginationResponse> = await api.post("/api/admin/Almacen/Paginado", {
-    page,
-    size,
-    idsEmpresa: selectedEmpresas.value
-      ?.map((x: Empresa) => x.id)
-      .join(","),
-    nombre: nombreAlmacen.value,
-  } as InfoFiltro);
+  const { data }: AxiosResponse<PaginationResponse> = await api.post(
+    "/api/admin/Cliente/Paginado",
+    {
+      page,
+      size,
+      nombre: nombreBusqueda.value,
+    } as InfoFiltro
+  );
 
   totalPages.value = data.totalPages;
   totalRegister.value = data.totalRecords;
@@ -120,168 +126,156 @@ const getAlmacenes = async (page: number): Promise<Almacen[]> => {
 export const useCliente = () => {
   // State
   const disabled = ref<boolean>(true);
-  const activo = ref<boolean>(true);
-  const nombre = ref<string>("");
-  const telefono = ref<string>("");
-  const direccion = ref<string>("");
-  const codigoEstablecimiento = ref<string>("");
-  const idEmpresa = ref<number[]>([]);
-  const selected = ref<number | null>(null);
-  const idTipoSucursal = ref<number>(0);
+  const nombres = ref<string>("");
+  const empresa = ref<string>("");
+  const cargos = ref<string>("");
+  const email = ref<string>("");
+  const telefonos = ref<string>("");
+  const selectedsector = ref<number>(0);
+  const selectedFront = ref<number>(0);
+  const clienteActual = ref<string>("Almacén");
   const showmodal = ref<boolean>(false);
-  const nombreTabla = ref<string>("Almacén");
+  type ClienteType = "actual" | "nuevo";
 
+  // Variable reactiva con valor inicial
+  const tipoCliente = ref<ClienteType>("actual");
   // Métodos
   const BuscarFiltros = (): void => {
-    const infoAlmacenlist: InfoFiltro = {
+    const infoClientelist: InfoFiltro = {
       page: 1,
       size: 10,
-      idsEmpresa: selectedEmpresas.value
-        ?.map((x: Empresa) => x.id)
-        .join(",") || "",
-      nombre: nombreAlmacen.value || "",
+      nombre: nombreBusqueda.value || "",
     };
-    store.BusquedaPaginado(infoAlmacenlist);
+    store.BusquedaPaginado(infoClientelist);
   };
 
-  const addAlmacen = async (): Promise<void> => {
-    const infoAlmacen: InfoAlmacen = {
+  const addCliente = async (): Promise<void> => {
+    debugger;
+    const infoCliente: InfoCliente = {
       id: 0,
-      activo: activo.value,
-      idEmpresa: idEmpresa.value[0] || 0,
-      idTipoSucursal: idTipoSucursal.value,
-      nombre: nombre.value,
-      telefono: telefono.value,
-      direccion: direccion.value,
-      codigoEstablecimiento: codigoEstablecimiento.value,
+      nombres: nombres.value,
+      empresa: empresa.value,
+      cargos: cargos.value,
+      email: email.value,
+      telefonos: telefonos.value,
+      selectedsector: selectedsector.value,
+      selectedFront: selectedFront.value,
+      tipoCliente: tipoCliente.value,
+      activo: true,
     };
 
-    const res: ApiResponse = await store.saveAlmacen(infoAlmacen, 1);
+    console.log(infoCliente);
 
-    if (res.tipoResultado) {
-      //swalSuccess(res.mensaje);
-      router.push({ name: "administracion-listalmacenes" });
-    } else {
-      console.log("Error al guardar", res.mensaje);
-    }
+    // const res: ApiResponse = await store.saveCliente(infoCliente, 1);
+    // if (res.tipoResultado) {
+    //   //swalSuccess(res.mensaje);
+    //   router.push({ name: "administracion-listClientees" });
+    // } else {
+    //   console.log("Error al guardar", res.mensaje);
+    // }
   };
+
+  const frontOptions = ref<FrontOption[]>([
+    { value: 1, label: "Opción 1" },
+    { value: 2, label: "Opción 2" },
+    { value: 3, label: "Opción 3" },
+  ]);
 
   const LogAcciones = (): void => {
     showmodal.value = true;
   };
 
-//   const getIdAlmacen = (value: string): void => {
-//     store.getAlmacen(parseInt(value)).then((data: Almacen) => {
-//       idEmpresa.value = [data.idEmpresa];
-//       idTipoSucursal.value = data.idTipoSucursal;
-//       selected.value = data.idTipoSucursal;
-//       nombre.value = data.nombre;
-//       telefono.value = data.telefono;
-//       direccion.value = data.direccion;
-//       codigoEstablecimiento.value = data.codigoEstablecimiento;
-//       activo.value = data.activo;
-//     });
-//   };
+  //   const getIdCliente = (value: string): void => {
+  //     store.getCliente(parseInt(value)).then((data: Cliente) => {
+  //       idEmpresa.value = [data.idEmpresa];
+  //       idTipoSucursal.value = data.idTipoSucursal;
+  //       selected.value = data.idTipoSucursal;
+  //       nombre.value = data.nombre;
+  //       telefono.value = data.telefono;
+  //       direccion.value = data.direccion;
+  //       codigoEstablecimiento.value = data.codigoEstablecimiento;
+  //       activo.value = data.activo;
+  //     });
+  //   };
 
-  const ListAlmacenes = (): void => {
-    router.push({ name: "administracion-listalmacenes" });
-  };
-
-  const updateAlmacen = async (id: number): Promise<void> => {
-    const infoAlmacen: InfoAlmacen = {
-      id: id,
-      activo: activo.value,
-      idEmpresa: idEmpresa.value[0] || 0,
-      idTipoSucursal: idTipoSucursal.value,
-      nombre: nombre.value,
-      telefono: telefono.value,
-      direccion: direccion.value,
-      codigoEstablecimiento: codigoEstablecimiento.value,
-    };
-
-    const res: ApiResponse = await store.saveAlmacen(infoAlmacen, 2);
-
-    if (res.tipoResultado) {
-      //swalSuccess(res.mensaje);
-      router.push({ name: "administracion-listalmacenes" });
-    } else {
-      console.log("Error al guardar", res.mensaje);
-    }
+  const ListClientees = (): void => {
+    router.push({ name: "administracion-listClientees" });
   };
 
   const Editar = (): void => {
     disabled.value = false;
   };
 
-  const changeValorEmpresa = (val: Event): void => {
-    const target = val.target as HTMLSelectElement;
-    idEmpresa.value = [parseInt(target.value)];
-  };
-
-  const getIdValor = (val: number): void => {
-    idTipoSucursal.value = val;
-  };
-
   // Rutas
-  const routerAddAlmacen = (): void => {
-    router.push({ name: "administracion-addalmacenes" });
+  const routerAddCliente = (): void => {
+    router.push({ name: "administracion-addClientees" });
   };
 
-  const routerUpdateAlmacenes = (val: number): void => {
+  const routerUpdateClientees = (val: number): void => {
     router.push({
-      name: "administracion-updatealmacenes",
+      name: "administracion-updateClientees",
       params: { id: val.toString() },
     });
   };
 
   // Paginación y query
-  const { currentPages, totalPages, totalRegister, almaceneslist } = storeToRefs(store);
+  const { currentPages, totalPages, totalRegister, clienteslist } =
+    storeToRefs(store);
 
-//   const { isLoading } = useQuery(
-//     ["almacenes?page=", currentPages],
-//     () => getAlmacenes(currentPages.value),
-//     {
-//       onSuccess: (response: Almacen[]) => {
-//         store.setAlmacenes(response);
-//       },
-//     }
-//   );
+  // Configuración de la query
+  const { isLoading, data: clientes } = useQuery({
+    queryKey: ["clientes", currentPages.value],
+    queryFn: () => getClientes(currentPages.value),
+    // Opciones disponibles en Vue Query
+    staleTime: 1000 * 60 * 5, // 5 minutos hasta considerar stale
+    gcTime: 1000 * 60 * 10, // 10 minutos en caché
+  });
+
+  // Observar cambios en los datos y actualizar el store
+  watch(
+    clientes,
+    (newClientes) => {
+      if (newClientes) {
+        store.setClientes(newClientes);
+      }
+    },
+    { immediate: true }
+  );
 
   return {
     // State
-    //isLoading,
-    almaceneslist,
+    isLoading,
+    clienteslist,
     currentPages,
     totalPages,
     totalRegister,
     //listaEmpresas,
     nombreComboDinamico,
     selectedEmpresas,
-    activo,
-    nombre,
-    telefono,
-    direccion,
-    codigoEstablecimiento,
-    idEmpresa,
-    selected,
-    placeholder,
-    nombreAlmacen,
+    nombres,
+    empresa,
+    cargos,
+    email,
+    telefonos,
+    selectedsector,
+    selectedFront,
+    clienteActual,
+    nombreBusqueda,
     disabled,
-    nombreTabla,
     showmodal,
-
+    frontOptions,
+    tipoCliente,
     // Métodos
-    ListAlmacenes,
-    routerAddAlmacen,
-    routerUpdateAlmacenes,
+    ListClientees,
+    routerAddCliente,
+    routerUpdateClientees,
     Editar,
     BuscarFiltros,
     LogAcciones,
-    addAlmacen,
-    updateAlmacen,
-    //getIdAlmacen,
-    changeValorEmpresa,
-    getIdValor,
+    addCliente,
+
+    //getIdCliente,
+
     getPage: (page: number) => {
       store.setPage(page);
     },

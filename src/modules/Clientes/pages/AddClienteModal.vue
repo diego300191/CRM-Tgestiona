@@ -1,8 +1,25 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import stateStore from "@/utils/store";
+import useCliente from "@/modules/Clientes/composables/useCliente";
 
 const stateStoreInstance = stateStore;
+
+
+const {
+  nombres,
+    empresa,
+    cargos,
+    email,
+    telefonos,
+    selectedsector,
+    selectedFront,
+    frontOptions,
+    tipoCliente,
+    addCliente,
+} = useCliente();
+
+
 </script>
 <template>
   <div
@@ -25,6 +42,7 @@ const stateStoreInstance = stateStore;
                   <input
                     type="text"
                     class="form-control shadow-none rounded-0 text-black"
+                    v-model="nombres"
                   />
                 </div>
               </div>
@@ -36,6 +54,7 @@ const stateStoreInstance = stateStore;
                   <input
                     type="text"
                     class="form-control shadow-none rounded-0 text-black"
+                    v-model="empresa"
                   />
                 </div>
               </div>
@@ -47,6 +66,7 @@ const stateStoreInstance = stateStore;
                   <input
                     type="text"
                     class="form-control shadow-none rounded-0 text-black"
+                    v-model="cargos"
                   />
                 </div>
               </div>
@@ -58,6 +78,7 @@ const stateStoreInstance = stateStore;
                   <input
                     type="email"
                     class="form-control shadow-none rounded-0 text-black"
+                    v-model="email"
                   />
                 </div>
               </div>
@@ -69,6 +90,7 @@ const stateStoreInstance = stateStore;
                   <input
                     type="text"
                     class="form-control shadow-none rounded-0 text-black"
+                    v-model="telefonos"
                   />
                 </div>
               </div>
@@ -79,11 +101,13 @@ const stateStoreInstance = stateStore;
                 <select
                   class="form-select shadow-none fs-md-15 text-black"
                   id="validationCustomFront"
+                  v-model="selectedsector"
                   required
                 >
                   <option selected disabled value="">Seleccionar...</option>
-                  <option>Opción 1</option>
-                  <option>Opción 2</option>
+                  <option v-for="option in frontOptions" :key="option.value" :value="option.value">
+                    {{ option.label }}
+                  </option>
                 </select>
                 <div class="invalid-feedback">
                   Por favor selecciona un front válido.
@@ -96,51 +120,49 @@ const stateStoreInstance = stateStore;
                 <select
                   class="form-select shadow-none fs-md-15 text-black"
                   id="validationCustomFront"
+                  v-model="selectedFront"
                   required
                 >
                   <option selected disabled value="">Seleccionar...</option>
-                  <option>Opción 1</option>
-                  <option>Opción 2</option>
+                  <option v-for="option in frontOptions" :key="option.value" :value="option.value">
+                    {{ option.label }}
+                  </option>
                 </select>
                 <div class="invalid-feedback">
                   Por favor selecciona un front válido.
                 </div>
               </div>
               <div class="col-lg-6 col-md-6">
-                <div class="form-check">
-                  <input
-                    class="form-check-input shadow-none"
-                    type="radio"
-                    name="flexRadioDefault"
-                    id="flexRadioDefault1"
-                    checked
-                  />
-
-                  <label
-                    class="form-check-label fw-medium"
-                    for="flexRadioDefault1"
-                    >CLIENTE ACTUAL</label
-                  >
-                </div>
-                <div class="form-check">
-                  <input
-                    class="form-check-input shadow-none"
-                    type="radio"
-                    name="flexRadioDefault"
-                    id="flexRadioDefault2"
-                  />
-                  <label
-                    class="form-check-label fw-medium"
-                    for="flexRadioDefault2"
-                  >
-                    CLIENTE NUEVO
-                  </label>
-                </div>
-              </div>
+    <div class="form-check">
+      <input
+        class="form-check-input shadow-none"
+        type="radio"
+        id="flexRadioDefault1"
+        v-model="tipoCliente"
+        value="actual"
+      />
+      <label class="form-check-label fw-medium" for="flexRadioDefault1">
+        CLIENTE ACTUAL
+      </label>
+    </div>
+    <div class="form-check">
+      <input
+        class="form-check-input shadow-none"
+        type="radio"
+        id="flexRadioDefault2"
+        v-model="tipoCliente"
+        value="nuevo"
+      />
+      <label class="form-check-label fw-medium" for="flexRadioDefault2">
+        CLIENTE NUEVO
+      </label>
+    </div>
+  </div>
             </div>
             <button
               class="default-btn transition border-0 fw-medium text-white pt-10 pb-10 ps-25 pe-25 pt-md-11 pb-md-11 ps-md-35 pe-md-35 rounded-1 fs-md-15 fs-lg-16 mt-15 mt-md-25"
               type="submit"
+              @click="addCliente()"
             >
               GUARDAR
             </button>
