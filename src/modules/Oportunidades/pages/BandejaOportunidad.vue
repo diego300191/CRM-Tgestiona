@@ -1,16 +1,23 @@
 
 <script lang="ts" setup >
-import { ref } from "vue";
-import stateStore from "@/utils/store";
-import { useRouter, useRoute } from "vue-router";
-const router = useRouter();
+import PaginationNumbers from "@/components/Personalizados/PaginationNumbers.vue";
+import LoadingModal from "@/components/Personalizados/LoadingModal.vue";
+import useOportunidad from "@/modules/Oportunidades/composables/useOportunidad";
 
 
-const AddOportunidad = () => {
-    router.push({ name: "Oportunidad-addOportunidad" });
-  };
+const {
+routerAddOportunidad,
+routerUpdateOportunidades,
+isLoading,
+  oportunidadlist,
+  currentPages,
+  totalPages,
+  totalRegister,
+  nombreBusqueda,
+  getPage,
+  BuscarFiltros,
+} = useOportunidad();
 
-const stateStoreInstance = stateStore;
 
 </script>
 
@@ -42,7 +49,7 @@ const stateStoreInstance = stateStore;
                 <button
                   class="default-btn position-relative transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-12 pb-md-12 ps-md-30 pe-md-30 rounded-1 bg-success fs-md-15 fs-lg-16 d-inline-block me-10 mb-10 mb-lg-0"
                   type="button"
-                @click="AddOportunidad()"
+                @click="routerAddOportunidad()"
                 >
                   Nuevo Oportunidad
                   <i class="flaticon-plus position-relative ms-5 fs-12"></i>
@@ -111,300 +118,44 @@ const stateStoreInstance = stateStore;
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <th
-                        class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
-                      >
-                        <div class="d-flex align-items-center">
-                          <div
-                            class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16"
-                          >
-                          Rola Pharmaceuticals
-                          </div>
-                        </div>
-                      </th>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        Vigente
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        EN ELABORACIÓN DE PROPUESTA
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        YULEISY
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        CINDY
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        +51 99999999
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        CLIENTE ACTUAL
-                      </td>
-                      <td
-                        class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
-                      >
-                          <button
-                            class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                            type="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                            @click="stateStoreInstance.createNewModal"
-                          >
-                            <i class="flaticon-dots"></i>
-                          </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th
-                        class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
-                      >
-                        <div class="d-flex align-items-center">
-                          <div
-                            class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16"
-                          >
-                          Rola Pharmaceuticals
-                          </div>
-                        </div>
-                      </th>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        Vigente
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        EN ELABORACIÓN DE PROPUESTA
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        YULEISY
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        CINDY
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        +51 99999999
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        CLIENTE ACTUAL
-                      </td>
-                      <td
-                        class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
-                      >
-                          <button
-                            class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                            type="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                            @click="stateStoreInstance.createNewModal"
-                          >
-                            <i class="flaticon-dots"></i>
-                          </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th
-                        class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
-                      >
-                        <div class="d-flex align-items-center">
-                          <div
-                            class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16"
-                          >
-                          Rola Pharmaceuticals
-                          </div>
-                        </div>
-                      </th>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        Vigente
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        EN ELABORACIÓN DE PROPUESTA
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        YULEISY
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        CINDY
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        +51 99999999
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        CLIENTE ACTUAL
-                      </td>
-                      <td
-                        class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
-                      >
-                          <button
-                            class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                            type="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                            @click="stateStoreInstance.createNewModal"
-                          >
-                            <i class="flaticon-dots"></i>
-                          </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th
-                        class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
-                      >
-                        <div class="d-flex align-items-center">
-                          <div
-                            class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16"
-                          >
-                          Rola Pharmaceuticals
-                          </div>
-                        </div>
-                      </th>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        Vigente
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        EN ELABORACIÓN DE PROPUESTA
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        YULEISY
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        CINDY
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        +51 99999999
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        CLIENTE ACTUAL
-                      </td>
-                      <td
-                        class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
-                      >
-                          <button
-                            class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                            type="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                            @click="stateStoreInstance.createNewModal"
-                          >
-                            <i class="flaticon-dots"></i>
-                          </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th
-                        class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
-                      >
-                        <div class="d-flex align-items-center">
-                          <div
-                            class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16"
-                          >
-                          Rola Pharmaceuticals
-                          </div>
-                        </div>
-                      </th>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        Vigente
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        EN ELABORACIÓN DE PROPUESTA
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        YULEISY
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        CINDY
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        +51 99999999
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        CLIENTE ACTUAL
-                      </td>
-                      <td
-                        class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
-                      >
-                          <button
-                            class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                            type="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                            @click="stateStoreInstance.createNewModal"
-                          >
-                            <i class="flaticon-dots"></i>
-                          </button>
-                      </td>
-                    </tr>
-                    <tr>
-                      <th
-                        class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
-                      >
-                        <div class="d-flex align-items-center">
-                          <div
-                            class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16"
-                          >
-                          Rola Pharmaceuticals
-                          </div>
-                        </div>
-                      </th>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        Vigente
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        EN ELABORACIÓN DE PROPUESTA
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        YULEISY
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        CINDY
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        +51 99999999
-                      </td>
-                      <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                        CLIENTE ACTUAL
-                      </td>
-                      <td
-                        class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
-                      >
-                          <button
-                            class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                            type="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false"
-                            @click="stateStoreInstance.createNewModal"
-                          >
-                            <i class="flaticon-dots"></i>
-                          </button>
-                      </td>
-                    </tr>
+                    <tr v-for="oportunidad in oportunidadlist" :key="oportunidad.id">
+                  <th class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0">
+                    <div class="d-flex align-items-center">
+                      <div class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16">
+                        {{ oportunidad.cliente }}
+                      </div>
+                    </div>
+                  </th>
+                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">Vigente</td>
+                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">{{ oportunidad.estadoOportunidad }}</td>
+                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">back</td>
+                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">front</td>
+                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">{{ oportunidad.telefonoContacto }}</td>
+                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">CLIENTE {{ oportunidad.tipoCliente }}</td>
+                  <td class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0">
+                    <button
+                      class="btn btn-primary btn-sm"
+                      @click="routerUpdateOportunidades(oportunidad.id)"
+                    >
+                      Editar
+                    </button>
+                  </td>
+                </tr>
                   </tbody>
                 </table>
               </div>
-              <div
-                class="pagination-area d-md-flex mt-15 mt-sm-20 mt-md-25 justify-content-between align-items-center"
-              >
-                <p class="mb-0 text-paragraph"></p>
-                <nav class="mt-15 mt-md-0">
-                  <ul class="pagination mb-0">
-                    <li class="page-item">
-                      <a class="page-link" href="#" aria-label="Previous">
-                        <i class="flaticon-chevron-1"></i>
-                      </a>
-                    </li>
-                    <li class="page-item">
-                      <a class="page-link active" href="#">1</a>
-                    </li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item">
-                      <a class="page-link" href="#" aria-label="Next">
-                        <i class="flaticon-chevron"></i>
-                      </a>
-                    </li>
-                  </ul>
-                </nav>
-              </div>
+              <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3 mt-2">
+            <PaginationNumbers
+              :currentPages="currentPages"
+              :totalPages="totalPages"
+              :totalRegister="totalRegister"
+              @page-Changed="getPage"
+            />
+          </div>
             </div>
           </div>
       </div>
+      <LoadingModal v-if="isLoading" />
     </div>
   </template>
   

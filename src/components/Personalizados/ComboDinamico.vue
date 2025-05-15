@@ -1,16 +1,13 @@
 <script setup lang="ts">
-import { ref, watch, toRefs, defineProps, defineEmits,withDefaults  } from "vue";
+import { ref, watch, toRefs, defineProps, defineEmits, withDefaults } from "vue";
 import api from "@/api/Api";
 import type { AxiosResponse } from "axios";
 
-// Interface para los items de la maestra
 interface MaestraItem {
   id: number;
   nombre: string;
-  // Puedes añadir más propiedades si la API las devuelve
 }
 
-// Props con tipado más completo y valores por defecto
 interface Props {
   idMaestra: number;
   nombreMaestra?: string;
@@ -30,31 +27,29 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   (event: "update:seleccionado", value: number): void;
-  (event: "update:texto", value: string): void;
+  (event: "texto", value: string): void;
   (event: "cargado"): void;
 }>();
 
-// Usamos toRefs para todas las props
-const { idMaestra, nombreMaestra, seleccionado, disabled } = toRefs(props);
+const { idMaestra, nombreMaestra, disabled } = toRefs(props);
 
 const opciones = ref<MaestraItem[]>([]);
-const seleccionActual = ref(seleccionado.value);
+const seleccionActual = ref(props.seleccionado);
 const cargando = ref(false);
 const error = ref<string | null>(null);
 
 // Watcher para cambios en la prop seleccionado
-watch(seleccionado, (newVal) => {
+watch(() => props.seleccionado, (newVal) => {
   seleccionActual.value = newVal;
 });
 
-// Watcher para cambios en la selección
+// Watcher para cambios internos
 watch(seleccionActual, (newVal) => {
   const textoSeleccionado = opciones.value.find(opt => opt.id === newVal)?.nombre || '';
   emit('update:seleccionado', newVal);
-  emit('update:texto', textoSeleccionado);
+  emit('texto', textoSeleccionado);
 });
 
-// Cargar datos de la maestra
 const cargarMaestra = async () => {
   try {
     cargando.value = true;
@@ -67,9 +62,10 @@ const cargarMaestra = async () => {
     opciones.value = data.body || [];
     emit('cargado');
     
-    // Si hay un valor seleccionado pero no está en las opciones
-    if (seleccionado.value && !opciones.value.some(opt => opt.id === seleccionado.value)) {
+    // Verificar si el valor seleccionado existe en las opciones
+    if (props.seleccionado && !opciones.value.some(opt => opt.id === props.seleccionado)) {
       seleccionActual.value = 0;
+      emit('update:seleccionado', 0);
     }
   } catch (err) {
     error.value = 'Error al cargar las opciones';
@@ -79,10 +75,8 @@ const cargarMaestra = async () => {
   }
 };
 
-// Cargar al montar y cuando cambia idMaestra
 watch(idMaestra, cargarMaestra, { immediate: true });
 </script>
-
 <template>
   <div class="mb-3">
     <label 

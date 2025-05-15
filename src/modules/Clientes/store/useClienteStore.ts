@@ -2,28 +2,18 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import api from "@/api/Api";
 import type { AxiosResponse } from "axios";
-import { InfoCliente, PaginationData, InfoFiltro } from "../interfaces/index";
-// Define interfaces para los tipos de datos
-interface Cliente {
-  id?: number;
-  // Agrega aquí todas las propiedades de un almacén
-  [key: string]: any;
-}
+import { InfoCliente, PaginationData, InfoFiltro,InfoClientePaginado } from "../interfaces/index";
 
-interface InfoFiltroBusqueda {
-  // Define la estructura de tus filtros de búsqueda
-  [key: string]: any;
-}
 
 export const useClienteStore = defineStore("useCliente", () => {
   // Estado tipado
   const currentPages = ref<number>(1);
   const totalPages = ref<number>(0);
-  const clienteslist = ref<Cliente[]>([]);
+  const clienteslist = ref<InfoClientePaginado[]>([]);
   const totalRegister = ref<number>(0);
 
   // Acciones
-  const setClientes = (newClientes: Cliente[]): void => {
+  const setClientes = (newClientes: InfoClientePaginado[]): void => {
     clienteslist.value = newClientes;
   };
 

@@ -1,37 +1,70 @@
 export interface InfoobjOportunidad {
   id: number;
-  nombres: string;
-  empresa: string;
-  cargos: string;
-  email: string;
-  telefonos: string;
-  selectedsector: number;
-  selectedFront: number;
-  tipoCliente: string;
+  codigo: string;
+  idCliente: number;
+  idEstadoOportunidad: number;
+  idFuenteOrigen: number;
+  idTipoProspeccion: number;
+  idTipoMedio: number;
+  idUnidad: number;
+  idTipoSolucionFM: number;
+  idSubTipoSolucionFM: number;
+  idUsuarioBack: number;
+  idUsuarioFront: number;
+  idUsuarioEntrega: number;
+  importe: number;
+  marge: number;
+  detalle: string;
+  servicio: string;
   activo: boolean;
-
+  idUsuarioRegistro: number;
 }
 
 
-interface InfoClientePaginado {
-activo : boolean;
-codigo: string;
-contacto : string;
-emailContacto : string;
-id : number;
-idSector:number;
-idTipoCliente : number;
-nombre:string;
-nombreCorto : string;
-telefonoContacto:string;
+export interface InfoOportunidadPaginado {
+  id: number;
+  codigo: string;
+  idcliente: number;
+  cliente: string;
+  telefonoContacto: string;
+  idTipoCliente: number;
+  tipoCliente: string;
+  idEstadoOportunidad: number;
+  estadoOportunidad: string;
+  idFuenteOrigen: number;
+  idTipoProspeccion: number;
+  idTipoMedio: number;
+  idUnidad: number;
+  idTipoSolucionFm: number;
+  idSubTipoSolucionFm: number;
+  idUsuarioBack: number;
+  idUsuarioFrom: number;
+  idusuarioentrega: number;
+  importe: number;
+  marge: number;
+  detalle: string;
+  servicio: string;
+  activo: boolean;
+  idUsuarioRegistro: number;
+  fechaRegistro: Date; 
+  usuarioBack: string;
+  usuarioFront: string;
 }
 
 
 export interface PaginationData {
-  body: InfoClientePaginado[];
+  body: InfoOportunidadPaginado[];
   totalPages: number;
   totalRecord: number;
 }
+
+export interface PaginationResponse {
+  data: InfoOportunidadPaginado[];
+  totalPages: number;
+  totalRecords: number;
+  [key: string]: any;
+}
+
 
 interface Pagina {
   page: number;
@@ -39,10 +72,9 @@ interface Pagina {
 }
 
 export interface InfoFiltro {
-  id?: number;
-  nombre?: string;
-  activo?: boolean;
-  idSector?: number;
-  idTipoCliente?: number;
+  IdEstadoOportunidad?: number;
+  IdCliente?: number;
+  IdSubTipoSolucionFm?: number;
+  Activo?: boolean;
   pagina?: Pagina;
 }

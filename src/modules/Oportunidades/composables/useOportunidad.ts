@@ -3,7 +3,12 @@ import { useQuery } from "@tanstack/vue-query";
 import router from "@/router";
 import { storeToRefs } from "pinia";
 import { useOportunidaStore } from "@/modules/Oportunidades/store/useOportunidadStore";
-import { InfoobjOportunidad, InfoFiltro } from "../interfaces/index";
+import {
+  InfoobjOportunidad,
+  InfoFiltro,
+  PaginationResponse,
+} from "../interfaces/index";
+import Swal from "sweetalert2";
 //import { useAuthStore } from "@/modules/Auth/store/useAuthStore";
 //import Swal from "sweetalert2";
 import api from "@/api/Api";
@@ -15,51 +20,32 @@ interface Empresa {
   [key: string]: any;
 }
 
-interface Cliente {
-  id: number;
-  idEmpresa: number;
-  idTipoSucursal: number;
-  nombre: string;
-  telefono: string;
-  direccion: string;
-  codigoEstablecimiento: string;
-  activo: boolean;
-  [key: string]: any;
-}
-
 interface ApiResponse {
   tipoResultado: boolean;
   mensaje: string;
   [key: string]: any;
 }
 
-interface PaginationResponse {
-  data: Cliente[];
-  totalPages: number;
-  totalRecords: number;
-  [key: string]: any;
-}
+//Configuración de SweetAlert2
+const toast = Swal.mixin({
+  buttonsStyling: false,
+  target: "#page-container",
+  customClass: {
+    confirmButton: "btn btn-success m-1",
+    cancelButton: "btn btn-danger m-1",
+    input: "form-control",
+  },
+});
 
-// Configuración de SweetAlert2
-// const toast = Swal.mixin({
-//   buttonsStyling: false,
-//   target: "#page-container",
-//   customClass: {
-//     confirmButton: "btn btn-success m-1",
-//     cancelButton: "btn btn-danger m-1",
-//     input: "form-control",
-//   },
-// });
-
-// const swalSuccess = (message: string): void => {
-//   toast.fire({
-//     title: "Guardado",
-//     text: message,
-//     icon: "success",
-//     showConfirmButton: false,
-//     timer: 1500,
-//   });
-// };
+const swalSuccess = (message: string): void => {
+  toast.fire({
+    title: "Guardado",
+    text: message,
+    icon: "success",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+};
 
 interface FrontOption {
   value: number;
@@ -68,22 +54,11 @@ interface FrontOption {
 
 // Stores
 const store = useOportunidaStore();
-//const storeAuth = useAuthStore();
-//const listaEmpresas: Ref<Empresa[]> = ref(storeAuth.listaEmpresas);
 const nombreComboDinamico = ref<string>("Tipo Sucursal");
 const nombreBusqueda = ref<string | null>("");
 const placeholder = ref<string>("Seleccionar...");
-const selectedEmpresas = ref<Empresa[]>();
-//const idEmpresaSession = localStorage.getItem("IdEmpresa");
 
-// Filtro inicial de empresas
-// const idempresadefault = listaEmpresas.value.filter(
-//   (option: Empresa) => option.id === parseInt(idEmpresaSession || "0")
-// );
-// selectedEmpresas.value = idempresadefault;
-
-// Función para obtener Clientees paginados
-const getOportunidad = async (page: number): Promise<Cliente[]> => {
+const getOportunidad = async (page: number): Promise<void> => {
   await new Promise((resolve) => {
     setTimeout(() => resolve(true), 1000);
   });
@@ -92,19 +67,18 @@ const getOportunidad = async (page: number): Promise<Cliente[]> => {
   const { totalPages, totalRegister } = storeToRefs(store);
 
   const filters: InfoFiltro = {
-    id: 1,
-    nombre: nombreBusqueda.value || "",
-    activo: true,
-    idSector: -1,
-    idTipoCliente: -1,
+    IdEstadoOportunidad: -1,
+    IdCliente: -1,
+    IdSubTipoSolucionFm: -1,
+    Activo: true,
     pagina: {
-      page: 1,
+      page: 0,
       pageSize: size,
     },
   };
 
   const { data }: AxiosResponse<PaginationResponse> = await api.post(
-    "/Common/ListaCliente",
+    "/Oportunidad/ListaOportunidad",
     filters
   );
 
@@ -116,15 +90,11 @@ const getOportunidad = async (page: number): Promise<Cliente[]> => {
 export const useOportunidad = () => {
   // State
   const disabled = ref<boolean>(true);
-  const nombres = ref<string>("");
-  const empresa = ref<string>("");
-  const cargos = ref<string>("");
-  const email = ref<string>("");
-  const telefonos = ref<string>("");
-  const selectedsector = ref<number>(0);
-  const selectedFront = ref<number>(0);
-  const showmodal = ref<boolean>(false);
-  type ClienteType = "actual" | "nuevo";
+  const importe = ref<number>(0);
+  const margen = ref<number>(0);
+  const detalle = ref<string>("");
+  const servicio = ref<string>("");
+
   //Llenado de los combos
   const IdMaestraFUENTEORIGEN = ref<number>(5);
   const IdMaestraPROSPECCION = ref<number>(2);
@@ -153,60 +123,52 @@ export const useOportunidad = () => {
   const selectSOLUCIONFM = ref<number>(0);
   const selectSUBTIPOSOLUCIONFM = ref<number>(0);
 
-  // Variable reactiva con valor inicial
-  const tipoCliente = ref<ClienteType>("actual");
   // Métodos
   const BuscarFiltros = (): void => {
     const filters: InfoFiltro = {
-      id: 0,
-      nombre: nombreBusqueda.value || "",
-      activo: true,
-      idSector: -1,
-      idTipoCliente: -1,
-      pagina: {
-        page: 1,
-        pageSize: 10,
-      },
-    };
+    IdEstadoOportunidad: -1,
+    IdCliente: -1,
+    IdSubTipoSolucionFm: -1,
+    Activo: true,
+    pagina: {
+      page: 0,
+      pageSize: 10,
+    },
+  };
 
     store.BusquedaPaginado(filters);
   };
 
-  const addCliente = async (): Promise<void> => {
-    const infoCliente: InfoobjOportunidad = {
+  const addOportinidad = async (): Promise<void> => {
+    const infoOportunidad: InfoobjOportunidad = {
       id: 0,
-      nombres: nombres.value,
-      empresa: empresa.value,
-      cargos: cargos.value,
-      email: email.value,
-      telefonos: telefonos.value,
-      selectedsector: selectedsector.value,
-      selectedFront: selectedFront.value,
-      tipoCliente: tipoCliente.value,
+      codigo: "",
+      idCliente: 1,
+      idEstadoOportunidad: 1,
+      idFuenteOrigen: selectFUENTEORIGEN.value,
+      idTipoProspeccion: selectPROSPECCION.value,
+      idTipoMedio: selectMEDIO.value,
+      idUnidad: selectUNIDAD.value,
+      idTipoSolucionFM: selectSOLUCIONFM.value,
+      idSubTipoSolucionFM: selectSUBTIPOSOLUCIONFM.value,
+      idUsuarioBack: selectBACK.value,
+      idUsuarioFront: 0,
+      idUsuarioEntrega: 0,
+      importe: importe.value,
+      marge: margen.value,
+      detalle: detalle.value,
+      servicio: servicio.value,
       activo: true,
-
-      // "Id":0,
-      //  "IdSector":selectedsector.value,
-      //  "IdTipoCliente":tipoCliente.value,
-      //  "Codigo":"",
-      // "NombreCorto":empresa.value,
-      // "Nombre":nombres.value,
-      // "Contacto": cargos.value ,
-      // "TelefonoContacto":telefonos.value,
-      // "EmailContacto":email.value,
-      //  "Activo":true,
-      //  "IdUsuarioRegistro":12
+      idUsuarioRegistro: 12,
     };
 
-    console.log(infoCliente);
-
-    // const res: ApiResponse = await store.saveCliente(infoCliente, 1);
-    // if (res.tipoResultado) {
-    //   //swalSuccess(res.mensaje);
-    //   router.push({ name: "administracion-listClientees" });
-    // } else {
-    //   console.log("Error al guardar", res.mensaje);
-    // }
+    const res: ApiResponse = await store.saveOportunidad(infoOportunidad);
+    if (res.code === 200) {
+      swalSuccess("Se Guardo Correctamente");
+      routerUpdateOportunidades(res.body);
+    } else {
+      console.log("Error al guardar", res.mensaje);
+    }
   };
 
   const frontOptions = ref<FrontOption[]>([
@@ -214,10 +176,6 @@ export const useOportunidad = () => {
     { value: 2, label: "Opción 2" },
     { value: 3, label: "Opción 3" },
   ]);
-
-  const LogAcciones = (): void => {
-    showmodal.value = true;
-  };
 
   //   const getIdCliente = (value: string): void => {
   //     store.getCliente(parseInt(value)).then((data: Cliente) => {
@@ -232,8 +190,8 @@ export const useOportunidad = () => {
   //     });
   //   };
 
-  const ListClientees = (): void => {
-    router.push({ name: "administracion-listClientees" });
+  const ListOportunidades = (): void => {
+    router.push({ name: "Oportunidad-listOportunidad" });
   };
 
   const Editar = (): void => {
@@ -241,13 +199,13 @@ export const useOportunidad = () => {
   };
 
   // Rutas
-  const routerAddCliente = (): void => {
-    router.push({ name: "administracion-addClientees" });
+  const routerAddOportunidad = (): void => {
+    router.push({ name: "Oportunidad-addOportunidad" });
   };
 
-  const routerUpdateClientees = (val: number): void => {
+  const routerUpdateOportunidades = (val: number): void => {
     router.push({
-      name: "administracion-updateClientees",
+      name: "Oportunidad-updateOportunidad",
       params: { id: val.toString() },
     });
   };
@@ -285,19 +243,9 @@ export const useOportunidad = () => {
     totalRegister,
     //listaEmpresas,
     nombreComboDinamico,
-    selectedEmpresas,
-    nombres,
-    empresa,
-    cargos,
-    email,
-    telefonos,
-    selectedsector,
-    selectedFront,
     nombreBusqueda,
     disabled,
-    showmodal,
     frontOptions,
-    tipoCliente,
     placeholder,
     IdMaestraFUENTEORIGEN,
     IdMaestraPROSPECCION,
@@ -323,15 +271,17 @@ export const useOportunidad = () => {
     selectPERSONAENCARGADA,
     selectSOLUCIONFM,
     selectSUBTIPOSOLUCIONFM,
+    importe,
+    margen,
+    detalle,
+    servicio,
     // Métodos
-    ListClientees,
-    routerAddCliente,
-    routerUpdateClientees,
+    ListOportunidades,
+    routerAddOportunidad,
+    routerUpdateOportunidades,
     Editar,
     BuscarFiltros,
-    LogAcciones,
-    addCliente,
-
+    addOportinidad,
     //getIdCliente,
 
     getPage: (page: number) => {

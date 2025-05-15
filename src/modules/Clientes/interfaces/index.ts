@@ -14,7 +14,7 @@ export interface InfoCliente {
   IdUsuarioRegistro: number;
 }
 
-interface InfoClientePaginado {
+export interface InfoClientePaginado {
 activo : boolean;
 codigo: string;
 contacto : string;

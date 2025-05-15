@@ -12,11 +12,6 @@ const UpdateOportunidades = (val) => {
     params: { id: val },
   });
 };
-
-const getIdValor = (val) => {
-  console.log(val);
-};
-
 const {
   IdMaestraFUENTEORIGEN,
   IdMaestraPROSPECCION,
@@ -43,6 +38,11 @@ const {
   selectSOLUCIONFM,
   selectSUBTIPOSOLUCIONFM,
   placeholder,
+  importe,
+margen,
+detalle,
+servicio,
+addOportinidad,
 } = useOportunidad();
 </script>
 
@@ -58,7 +58,7 @@ const {
         <button
           class="default-btn transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-12 pb-md-12 ps-md-30 pe-md-30 rounded-1 bg-success fs-md-15 fs-lg-16"
           type="button"
-          @click="UpdateOportunidades(1)"
+          @click="addOportinidad()"
         >
           GUARDAR
           <i class="flaticon-plus position-relative ms-5 fs-12"></i>
@@ -91,8 +91,7 @@ const {
             <ComboDinamico
               :idMaestra="IdMaestraFUENTEORIGEN"
               :nombreMaestra="nombreMaestraFUENTEORIGEN"
-              @idValor="getIdValor"
-              :seleccionado="selectFUENTEORIGEN"
+              v-model:seleccionado="selectFUENTEORIGEN"
               :disabled="false"
               :placeholder="placeholder"
               :required="true"
@@ -104,8 +103,7 @@ const {
             <ComboDinamico
               :idMaestra="IdMaestraPROSPECCION"
               :nombreMaestra="nombreMaestraPROSPECCION"
-              @idValor="getIdValor"
-              :seleccionado="selectPROSPECCION"
+              v-model:seleccionado="selectPROSPECCION"
               :disabled="false"
               :placeholder="placeholder"
               :required="true"
@@ -119,8 +117,7 @@ const {
             <ComboDinamico
               :idMaestra="IdMaestraMEDIO"
               :nombreMaestra="nombreMaestraMEDIO"
-              @idValor="getIdValor"
-              :seleccionado="selectMEDIO"
+              v-model:seleccionado="selectMEDIO"
               :disabled="false"
               :placeholder="placeholder"
               :required="true"
@@ -132,8 +129,7 @@ const {
             <ComboDinamico
               :idMaestra="IdMaestraUNIDAD"
               :nombreMaestra="nombreMaestraUNIDAD"
-              @idValor="getIdValor"
-              :seleccionado="selectUNIDAD"
+              v-model:seleccionado="selectUNIDAD"
               :disabled="false"
               :placeholder="placeholder"
               :required="true"
@@ -145,8 +141,7 @@ const {
             <ComboDinamico
               :idMaestra="IdMaestraBACK"
               :nombreMaestra="nombreMaestraBACK"
-              @idValor="getIdValor"
-              :seleccionado="selectBACK"
+              v-model:seleccionado="selectBACK"
               :disabled="false"
               :placeholder="placeholder"
               :required="true"
@@ -160,8 +155,7 @@ const {
             <ComboDinamico
               :idMaestra="IdMaestraPERSONAENCARGADA"
               :nombreMaestra="nombreMaestraPERSONAENCARGADA"
-              @idValor="getIdValor"
-              :seleccionado="selectPERSONAENCARGADA"
+              v-model:seleccionado="selectPERSONAENCARGADA"
               :disabled="false"
               :placeholder="placeholder"
               :required="true"
@@ -173,8 +167,7 @@ const {
             <ComboDinamico
               :idMaestra="IdMaestraSOLUCIONFM"
               :nombreMaestra="nombreMaestraSOLUCIONFM"
-              @idValor="getIdValor"
-              :seleccionado="selectSOLUCIONFM"
+              v-model:seleccionado="selectSOLUCIONFM"
               :disabled="false"
               :placeholder="placeholder"
               :required="true"
@@ -185,8 +178,7 @@ const {
             <ComboDinamico
               :idMaestra="IdMaestraSUBTIPOSOLUCIONFM"
               :nombreMaestra="nombreMaestraSUBTIPOSOLUCIONFM"
-              @idValor="getIdValor"
-              :seleccionado="selectSUBTIPOSOLUCIONFM"
+              v-model:seleccionado="selectSUBTIPOSOLUCIONFM"
               :disabled="false"
               :placeholder="placeholder"
               :required="true"
@@ -205,6 +197,7 @@ const {
                 type="text"
                 class="form-control shadow-none fs-md-15 text-black"
                 id="buscarCliente"
+                v-model="importe"
               />
             </div>
           </div>
@@ -217,6 +210,7 @@ const {
                 type="text"
                 class="form-control shadow-none fs-md-15 text-black"
                 id="buscarCliente"
+                v-model="margen"
               />
             </div>
           </div>
@@ -232,6 +226,7 @@ const {
                 class="form-control shadow-none fs-md-15 text-black"
                 id="basicFormControlTextarea1"
                 rows="3"
+                v-model="detalle"
               ></textarea>
             </div>
           </div>
@@ -249,6 +244,7 @@ const {
                 class="form-control shadow-none fs-md-15 text-black"
                 id="basicFormControlTextarea1"
                 rows="3"
+                v-model="servicio"
               ></textarea>
             </div>
           </div>

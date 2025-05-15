@@ -72,7 +72,7 @@ const store = useClienteStore();
 //const listaEmpresas: Ref<Empresa[]> = ref(storeAuth.listaEmpresas);
 const nombreComboDinamico = ref<string>("Tipo Sucursal");
 const nombreBusqueda = ref<string | null>("");
-const placeholder = ref<string>("Tipo Almacén");
+const placeholder = ref<string>("Seleccionar...");
 const selectedEmpresas = ref<Empresa[]>();
 //const idEmpresaSession = localStorage.getItem("IdEmpresa");
 
@@ -83,7 +83,7 @@ const selectedEmpresas = ref<Empresa[]>();
 // selectedEmpresas.value = idempresadefault;
 
 // Función para obtener Clientees paginados
-const getClientes = async (page: number): Promise<Cliente[]> => {
+const getClientes = async (page: number): Promise<void> => {
   await new Promise((resolve) => {
     setTimeout(() => resolve(true), 1000);
   });
@@ -121,9 +121,10 @@ export const useCliente = () => {
   const cargos = ref<string>("");
   const email = ref<string>("");
   const telefonos = ref<string>("");
-  const selectedsector = ref<number>(0);
   const selectedFront = ref<number>(0);
-  const clienteActual = ref<string>("Almacén");
+  const IdMaestraSECTOR = ref<number>(4);
+  const nombreMaestraSECTOR = ref<string>("SECTOR");
+  const selectSECTOR = ref<number>(0);
   const showmodal = ref<boolean>(false);
   type ClienteType = "actual" | "nuevo";
 
@@ -149,7 +150,7 @@ export const useCliente = () => {
   const addCliente = async (IdCliente : number): Promise<void> => {
     const infoCliente: InfoCliente = {
       Id: IdCliente == null ? 0 : IdCliente,
-      IdSector: selectedsector.value,
+      IdSector: selectSECTOR.value,
       IdTipoCliente: tipoCliente.value === 'actual' ? 1 : 2,
       Codigo: "",
       NombreCorto: nombres.value,
@@ -165,7 +166,7 @@ export const useCliente = () => {
 
     const res: ApiResponse = await store.saveCliente(infoCliente);
     if (res.code === 200) {
-      swalSuccess(res.mensaje);
+      swalSuccess("Se Guardo Correctamente");
       router.push({ name: "administracion-listClientees" });
     } else {
       console.log("Error al guardar", res.mensaje);
@@ -175,7 +176,7 @@ export const useCliente = () => {
   const getCliente = async (IdCliente : number): Promise<void> => {
     const res: ApiResponse = await store.getClienteStore(IdCliente);
     if (res.code === 200) {
-      selectedsector.value = res.body.idSector;
+      selectSECTOR.value = res.body.idSector;
       tipoCliente.value = res.body.idTipoCliente == 1 ? 'actual' : 'nuevo';
       nombres.value = res.body.nombre;
       empresa.value = res.body.contacto;
@@ -215,9 +216,7 @@ export const useCliente = () => {
     router.push({ name: "administracion-listClientees" });
   };
 
-  const Editar = (): void => {
-    disabled.value = false;
-  };
+
 
   // Rutas
   const routerAddCliente = (): void => {
@@ -270,26 +269,24 @@ export const useCliente = () => {
     cargos,
     email,
     telefonos,
-    selectedsector,
     selectedFront,
-    clienteActual,
+    IdMaestraSECTOR,
+    nombreMaestraSECTOR,
+    selectSECTOR,
     nombreBusqueda,
     disabled,
     showmodal,
     frontOptions,
     tipoCliente,
+    placeholder,
     // Métodos
     ListClientees,
     routerAddCliente,
     routerUpdateClientees,
-    Editar,
     BuscarFiltros,
     LogAcciones,
     addCliente,
     getCliente,
-
-    //getIdCliente,
-
     getPage: (page: number) => {
       store.setPage(page);
     },

@@ -2,30 +2,20 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import api from "@/api/Api";
 import type { AxiosResponse } from "axios";
-import { InfoobjOportunidad, PaginationData,InfoFiltro } from '../interfaces/index';
-// Define interfaces para los tipos de datos
-interface Oportunidad {
-  id?: number;
-  [key: string]: any;
-}
-
-
-interface InfoFiltroBusqueda {
-  [key: string]: any;
-}
+import { InfoobjOportunidad, PaginationData,InfoFiltro,InfoOportunidadPaginado } from '../interfaces/index';
 
 
 export const useOportunidaStore = defineStore(
-  "useOportunida",
+  "useOportunidad",
   () => {
     // Estado tipado
     const currentPages = ref<number>(1);
     const totalPages = ref<number>(0);
-    const oportunidadlist = ref<Oportunidad[]>([]);
+    const oportunidadlist = ref<InfoOportunidadPaginado[]>([]);
     const totalRegister = ref<number>(0);
 
     // Acciones
-    const setOportunidades = (newOportunidades: Oportunidad[]): void => {
+    const setOportunidades = (newOportunidades: InfoOportunidadPaginado[]): void => {
       oportunidadlist.value = newOportunidades;
     };
 
@@ -37,10 +27,10 @@ export const useOportunidaStore = defineStore(
 
   const saveOportunidad = async (objOportunidad: InfoobjOportunidad): Promise<any> => {
   try {
-    const { data }: AxiosResponse = await api.post("/Common/RegistrarCliente", { ...objOportunidad });
+    const { data }: AxiosResponse = await api.post("/Oportunidad/RegistrarOportunidad", { ...objOportunidad });
     return data;
   } catch (error) {
-    console.error("Error al guardar Cliente:", error);
+    console.error("Error al guardar Paciente:", error);
     throw error;
   }
 };
@@ -48,7 +38,7 @@ export const useOportunidaStore = defineStore(
     const BusquedaPaginado = async (infoFiltroBusqueda: InfoFiltro): Promise<void> => {
       try {
         oportunidadlist.value = [];
-        const { data }: AxiosResponse<PaginationData> = await api.post("/Common/ListaCliente", {
+        const { data }: AxiosResponse<PaginationData> = await api.post("/Oportunidad/ListaOportunidad", {
           ...infoFiltroBusqueda,
         });
 
