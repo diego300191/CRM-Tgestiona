@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import BreadCrumb from "@/components/Common/BreadCrumb.vue";
 import { useRouter, useRoute } from "vue-router";
+import ComboDinamico from "@/components/Personalizados/ComboDinamico.vue";
+import useOportunidad from "@/modules/Oportunidades/composables/useOportunidad";
+
 const router = useRouter();
 
 const UpdateOportunidades = (val) => {
@@ -9,6 +12,38 @@ const UpdateOportunidades = (val) => {
     params: { id: val },
   });
 };
+
+const getIdValor = (val) => {
+  console.log(val);
+};
+
+const {
+  IdMaestraFUENTEORIGEN,
+  IdMaestraPROSPECCION,
+  IdMaestraMEDIO,
+  IdMaestraUNIDAD,
+  IdMaestraBACK,
+  IdMaestraPERSONAENCARGADA,
+  IdMaestraSOLUCIONFM,
+  IdMaestraSUBTIPOSOLUCIONFM,
+  nombreMaestraFUENTEORIGEN,
+  nombreMaestraPROSPECCION,
+  nombreMaestraMEDIO,
+  nombreMaestraUNIDAD,
+  nombreMaestraBACK,
+  nombreMaestraPERSONAENCARGADA,
+  nombreMaestraSOLUCIONFM,
+  nombreMaestraSUBTIPOSOLUCIONFM,
+  selectFUENTEORIGEN,
+  selectPROSPECCION,
+  selectMEDIO,
+  selectUNIDAD,
+  selectBACK,
+  selectPERSONAENCARGADA,
+  selectSOLUCIONFM,
+  selectSUBTIPOSOLUCIONFM,
+  placeholder,
+} = useOportunidad();
 </script>
 
 <template>
@@ -53,150 +88,110 @@ const UpdateOportunidades = (val) => {
           </div>
 
           <div class="col-md-4">
-            <label for="validationCustomUnit" class="form-label fw-medium"
-              >FUENTE / ORIGEN</label
+            <ComboDinamico
+              :idMaestra="IdMaestraFUENTEORIGEN"
+              :nombreMaestra="nombreMaestraFUENTEORIGEN"
+              @idValor="getIdValor"
+              :seleccionado="selectFUENTEORIGEN"
+              :disabled="false"
+              :placeholder="placeholder"
+              :required="true"
             >
-            <select
-              class="form-select shadow-none fs-md-15 text-black"
-              id="validationCustomUnit"
-              required
-            >
-              <option selected disabled value="">Seleccionar...</option>
-              <option>Opción 1</option>
-              <option>Opción 2</option>
-            </select>
-            <div class="invalid-feedback">
-              Por favor selecciona una unidad válida.
-            </div>
+            </ComboDinamico>
           </div>
 
           <div class="col-md-4">
-            <label for="validationCustomPerson" class="form-label fw-medium"
-              >PROSPECCIÓN</label
+            <ComboDinamico
+              :idMaestra="IdMaestraPROSPECCION"
+              :nombreMaestra="nombreMaestraPROSPECCION"
+              @idValor="getIdValor"
+              :seleccionado="selectPROSPECCION"
+              :disabled="false"
+              :placeholder="placeholder"
+              :required="true"
             >
-            <select
-              class="form-select shadow-none fs-md-15 text-black"
-              id="validationCustomPerson"
-              required
-            >
-              <option selected disabled value="">Seleccionar...</option>
-              <option>Opción 1</option>
-              <option>Opción 2</option>
-            </select>
-            <div class="invalid-feedback">
-              Por favor selecciona una persona válida.
-            </div>
+            </ComboDinamico>
           </div>
         </div>
 
         <div class="row g-3">
           <div class="col-md-4">
-            <label for="validationCustomFront" class="form-label fw-medium"
-              >MEDIO</label
+            <ComboDinamico
+              :idMaestra="IdMaestraMEDIO"
+              :nombreMaestra="nombreMaestraMEDIO"
+              @idValor="getIdValor"
+              :seleccionado="selectMEDIO"
+              :disabled="false"
+              :placeholder="placeholder"
+              :required="true"
             >
-            <select
-              class="form-select shadow-none fs-md-15 text-black"
-              id="validationCustomFront"
-              required
-            >
-              <option selected disabled value="">Seleccionar...</option>
-              <option>Opción 1</option>
-              <option>Opción 2</option>
-            </select>
-            <div class="invalid-feedback">
-              Por favor selecciona un front válido.
-            </div>
+            </ComboDinamico>
           </div>
 
           <div class="col-md-4">
-            <label for="validationCustomBack" class="form-label fw-medium"
-              >UNIDAD</label
+            <ComboDinamico
+              :idMaestra="IdMaestraUNIDAD"
+              :nombreMaestra="nombreMaestraUNIDAD"
+              @idValor="getIdValor"
+              :seleccionado="selectUNIDAD"
+              :disabled="false"
+              :placeholder="placeholder"
+              :required="true"
             >
-            <select
-              class="form-select shadow-none fs-md-15 text-black"
-              id="validationCustomBack"
-              required
-            >
-              <option selected disabled value="">Seleccionar...</option>
-              <option>Opción 1</option>
-              <option>Opción 2</option>
-            </select>
-            <div class="invalid-feedback">
-              Por favor selecciona un back válido.
-            </div>
+            </ComboDinamico>
           </div>
 
           <div class="col-md-4">
-            <label for="validationCustomAnother" class="form-label fw-medium"
-              >BACK</label
+            <ComboDinamico
+              :idMaestra="IdMaestraBACK"
+              :nombreMaestra="nombreMaestraBACK"
+              @idValor="getIdValor"
+              :seleccionado="selectBACK"
+              :disabled="false"
+              :placeholder="placeholder"
+              :required="true"
             >
-            <select
-              class="form-select shadow-none fs-md-15 text-black"
-              id="validationCustomAnother"
-              required
-            >
-              <option selected disabled value="">Seleccionar...</option>
-              <option>Opción 1</option>
-              <option>Opción 2</option>
-            </select>
-            <div class="invalid-feedback">
-              Por favor selecciona una opción válida.
-            </div>
+            </ComboDinamico>
           </div>
         </div>
 
         <div class="row g-3">
           <div class="col-md-4">
-            <label for="validationCustomBack" class="form-label fw-medium"
-              >PERSONA ENCARGADA</label
+            <ComboDinamico
+              :idMaestra="IdMaestraPERSONAENCARGADA"
+              :nombreMaestra="nombreMaestraPERSONAENCARGADA"
+              @idValor="getIdValor"
+              :seleccionado="selectPERSONAENCARGADA"
+              :disabled="false"
+              :placeholder="placeholder"
+              :required="true"
             >
-            <select
-              class="form-select shadow-none fs-md-15 text-black"
-              id="validationCustomBack"
-              required
-            >
-              <option selected disabled value="">Seleccionar...</option>
-              <option>Opción 1</option>
-              <option>Opción 2</option>
-            </select>
-            <div class="invalid-feedback">
-              Por favor selecciona un back válido.
-            </div>
+            </ComboDinamico>
           </div>
 
           <div class="col-md-4">
-            <label for="validationCustomAnother" class="form-label fw-medium"
-              >SOLUCIÓN FM</label
+            <ComboDinamico
+              :idMaestra="IdMaestraSOLUCIONFM"
+              :nombreMaestra="nombreMaestraSOLUCIONFM"
+              @idValor="getIdValor"
+              :seleccionado="selectSOLUCIONFM"
+              :disabled="false"
+              :placeholder="placeholder"
+              :required="true"
             >
-            <select
-              class="form-select shadow-none fs-md-15 text-black"
-              id="validationCustomAnother"
-              required
-            >
-              <option selected disabled value="">Seleccionar...</option>
-              <option>Opción 1</option>
-              <option>Opción 2</option>
-            </select>
-            <div class="invalid-feedback">
-              Por favor selecciona una opción válida.
-            </div>
+            </ComboDinamico>
           </div>
           <div class="col-md-4">
-            <label for="validationCustomFront" class="form-label fw-medium"
-              >SUBTIPO SOLUCIÓN FM</label
+            <ComboDinamico
+              :idMaestra="IdMaestraSUBTIPOSOLUCIONFM"
+              :nombreMaestra="nombreMaestraSUBTIPOSOLUCIONFM"
+              @idValor="getIdValor"
+              :seleccionado="selectSUBTIPOSOLUCIONFM"
+              :disabled="false"
+              :placeholder="placeholder"
+              :required="true"
             >
-            <select
-              class="form-select shadow-none fs-md-15 text-black"
-              id="validationCustomFront"
-              required
-            >
-              <option selected disabled value="">Seleccionar...</option>
-              <option>Opción 1</option>
-              <option>Opción 2</option>
-            </select>
-            <div class="invalid-feedback">
-              Por favor selecciona un front válido.
-            </div>
+            </ComboDinamico>
           </div>
         </div>
 
@@ -243,7 +238,7 @@ const UpdateOportunidades = (val) => {
         </div>
         <div class="row g-3">
           <div class="col-md-4">
-            <div >
+            <div>
               <label
                 for="basicFormControlTextarea1"
                 class="form-label fw-medium text-black"

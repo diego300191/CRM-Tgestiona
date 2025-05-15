@@ -3,8 +3,9 @@ import { useQuery } from "@tanstack/vue-query";
 import router from "@/router";
 import { storeToRefs } from "pinia";
 import { useClienteStore } from "@/modules/Clientes/store/useClienteStore";
+import { InfoCliente, InfoFiltro } from "../interfaces/index";
 //import { useAuthStore } from "@/modules/Auth/store/useAuthStore";
-//import Swal from "sweetalert2";
+import Swal from "sweetalert2";
 import api from "@/api/Api";
 import type { AxiosResponse } from "axios";
 
@@ -26,19 +27,6 @@ interface Cliente {
   [key: string]: any;
 }
 
-interface InfoCliente {
-  id: number;
-  nombres: string;
-  empresa: string;
-  cargos: string;
-  email: string;
-  telefonos: string;
-  selectedsector: number;
-  selectedFront: number;
-  tipoCliente: string;
-  activo: boolean;
-}
-
 interface ApiResponse {
   tipoResultado: boolean;
   mensaje: string;
@@ -52,32 +40,26 @@ interface PaginationResponse {
   [key: string]: any;
 }
 
-interface InfoFiltro {
-  page: number;
-  size: number;
-  nombre: string | null;
-}
+//Configuración de SweetAlert2
+const toast = Swal.mixin({
+  buttonsStyling: false,
+  target: "#page-container",
+  customClass: {
+    confirmButton: "btn btn-success m-1",
+    cancelButton: "btn btn-danger m-1",
+    input: "form-control",
+  },
+});
 
-// Configuración de SweetAlert2
-// const toast = Swal.mixin({
-//   buttonsStyling: false,
-//   target: "#page-container",
-//   customClass: {
-//     confirmButton: "btn btn-success m-1",
-//     cancelButton: "btn btn-danger m-1",
-//     input: "form-control",
-//   },
-// });
-
-// const swalSuccess = (message: string): void => {
-//   toast.fire({
-//     title: "Guardado",
-//     text: message,
-//     icon: "success",
-//     showConfirmButton: false,
-//     timer: 1500,
-//   });
-// };
+const swalSuccess = (message: string): void => {
+  toast.fire({
+    title: "Guardado",
+    text: message,
+    icon: "success",
+    showConfirmButton: false,
+    timer: 1500,
+  });
+};
 
 interface FrontOption {
   value: number;
@@ -89,7 +71,7 @@ const store = useClienteStore();
 //const storeAuth = useAuthStore();
 //const listaEmpresas: Ref<Empresa[]> = ref(storeAuth.listaEmpresas);
 const nombreComboDinamico = ref<string>("Tipo Sucursal");
-const nombreBusqueda = ref<string | null>(null);
+const nombreBusqueda = ref<string | null>("");
 const placeholder = ref<string>("Tipo Almacén");
 const selectedEmpresas = ref<Empresa[]>();
 //const idEmpresaSession = localStorage.getItem("IdEmpresa");
@@ -109,18 +91,26 @@ const getClientes = async (page: number): Promise<Cliente[]> => {
   const size = 10;
   const { totalPages, totalRegister } = storeToRefs(store);
 
+  const filters: InfoFiltro = {
+    id: 1,
+    nombre: nombreBusqueda.value || "",
+    activo: true,
+    idSector: -1,
+    idTipoCliente: -1,
+    pagina: {
+      page: 0,
+      pageSize: size,
+    },
+  };
+
   const { data }: AxiosResponse<PaginationResponse> = await api.post(
-    "/api/admin/Cliente/Paginado",
-    {
-      page,
-      size,
-      nombre: nombreBusqueda.value,
-    } as InfoFiltro
+    "/Common/ListaCliente",
+    filters
   );
 
-  totalPages.value = data.totalPages;
-  totalRegister.value = data.totalRecords;
-  return data.data;
+  totalPages.value = data.totalPage;
+  totalRegister.value = data.totalRecord;
+  return data.body;
 };
 
 export const useCliente = () => {
@@ -141,38 +131,61 @@ export const useCliente = () => {
   const tipoCliente = ref<ClienteType>("actual");
   // Métodos
   const BuscarFiltros = (): void => {
-    const infoClientelist: InfoFiltro = {
-      page: 1,
-      size: 10,
+    const filters: InfoFiltro = {
+      id: 0,
       nombre: nombreBusqueda.value || "",
+      activo: true,
+      idSector: -1,
+      idTipoCliente: -1,
+      pagina: {
+        page: 0,
+        pageSize: 10,
+      },
     };
-    store.BusquedaPaginado(infoClientelist);
+
+    store.BusquedaPaginado(filters);
   };
 
-  const addCliente = async (): Promise<void> => {
-    debugger;
+  const addCliente = async (IdCliente : number): Promise<void> => {
     const infoCliente: InfoCliente = {
-      id: 0,
-      nombres: nombres.value,
-      empresa: empresa.value,
-      cargos: cargos.value,
-      email: email.value,
-      telefonos: telefonos.value,
-      selectedsector: selectedsector.value,
-      selectedFront: selectedFront.value,
-      tipoCliente: tipoCliente.value,
-      activo: true,
+      Id: IdCliente == null ? 0 : IdCliente,
+      IdSector: selectedsector.value,
+      IdTipoCliente: tipoCliente.value === 'actual' ? 1 : 2,
+      Codigo: "",
+      NombreCorto: nombres.value,
+      Nombre: nombres.value,
+      Contacto: empresa.value,
+      TelefonoContacto: telefonos.value,
+      EmailContacto: email.value,
+      Cargo: cargos.value,
+      IdUserFront: selectedFront.value,
+      Activo: true,
+      IdUsuarioRegistro: 12,
     };
 
-    console.log(infoCliente);
+    const res: ApiResponse = await store.saveCliente(infoCliente);
+    if (res.code === 200) {
+      swalSuccess(res.mensaje);
+      router.push({ name: "administracion-listClientees" });
+    } else {
+      console.log("Error al guardar", res.mensaje);
+    }
+  };
 
-    // const res: ApiResponse = await store.saveCliente(infoCliente, 1);
-    // if (res.tipoResultado) {
-    //   //swalSuccess(res.mensaje);
-    //   router.push({ name: "administracion-listClientees" });
-    // } else {
-    //   console.log("Error al guardar", res.mensaje);
-    // }
+  const getCliente = async (IdCliente : number): Promise<void> => {
+    const res: ApiResponse = await store.getClienteStore(IdCliente);
+    if (res.code === 200) {
+      selectedsector.value = res.body.idSector;
+      tipoCliente.value = res.body.idTipoCliente == 1 ? 'actual' : 'nuevo';
+      nombres.value = res.body.nombre;
+      empresa.value = res.body.contacto;
+      telefonos.value = res.body.telefonoContacto;
+      email.value = res.body.emailContacto;
+      cargos.value = res.body.cargo;
+      selectedFront.value = res.body.idUserFront;
+    } else {
+      console.log("Error al guardar", res.mensaje);
+    }
   };
 
   const frontOptions = ref<FrontOption[]>([
@@ -273,6 +286,7 @@ export const useCliente = () => {
     BuscarFiltros,
     LogAcciones,
     addCliente,
+    getCliente,
 
     //getIdCliente,
 

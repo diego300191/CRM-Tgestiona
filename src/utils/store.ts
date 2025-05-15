@@ -4,7 +4,10 @@ interface StateStore {
   open: boolean;
   onChange: () => void;
   show: boolean;
+  modalType: 'create' | 'update'; 
+  selectedClientId: number | null; 
   createNewModal: () => void;
+  updateClientModal: (id: number) => void; 
   seller: boolean;
   createNewSellerModal: () => void;
   invoice: boolean;
@@ -23,8 +26,17 @@ const stateStore: StateStore = reactive({
     stateStore.open = !stateStore.open;
   },
   show: false,
+  modalType: 'create', 
+  selectedClientId: null, 
   createNewModal() {
-    stateStore.show = !stateStore.show;
+    stateStore.modalType = 'create'; 
+    stateStore.selectedClientId = null; 
+    stateStore.show = !stateStore.show; 
+  },
+  updateClientModal(id: number) {
+    stateStore.modalType = 'update'; 
+    stateStore.selectedClientId = id;
+    stateStore.show = !stateStore.show; 
   },
   seller: false,
   createNewSellerModal() {

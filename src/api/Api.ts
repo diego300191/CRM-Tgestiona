@@ -8,7 +8,7 @@ interface CustomAxiosRequestConfig extends AxiosRequestConfig {
 const Api: AxiosInstance = axios.create({
   //baseURL: "http://181.224.251.62:8092/", // Svr Producción
   //baseURL: "http://181.224.251.56:8094/", // Svr Desarrollo
-  baseURL: "https://localhost:7026/", // Mi maquina
+  baseURL: "https://localhost:7122/", // Mi maquina
   headers: {
     "Content-Type": "application/json; charset=utf-8",
   },

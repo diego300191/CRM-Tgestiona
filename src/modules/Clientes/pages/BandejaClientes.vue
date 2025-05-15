@@ -1,11 +1,9 @@
-
-<script lang="ts" setup >
+<script lang="ts" setup>
 import { ref } from "vue";
 import AddClienteModal from "@/modules/Clientes/pages/AddClienteModal.vue";
 import PaginationNumbers from "@/components/Personalizados/PaginationNumbers.vue";
 import LoadingModal from "@/components/Personalizados/LoadingModal.vue";
 import useCliente from "@/modules/Clientes/composables/useCliente";
-
 import stateStore from "@/utils/store";
 
 const stateStoreInstance = stateStore;
@@ -26,17 +24,15 @@ const {
   <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
     <div class="card-body p-15 p-sm-20 p-md-25 p-lg-30">
       <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
-        <div
-          class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25"
-        >
+        <div class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25">
           <div class="d-flex align-items-center">
             <form class="search-box position-relative me-15">
               <input
                 type="text"
                 class="form-control shadow-none text-black rounded-0 border-0"
                 placeholder="Buscar Cliente"
-                 @keypress.enter="BuscarFiltros()"
-                  v-model="nombreBusqueda"
+                @keypress.enter="BuscarFiltros()"
+                v-model="nombreBusqueda"
               />
               <button
                 type="submit"
@@ -63,96 +59,37 @@ const {
             <table class="table text-nowrap align-middle mb-0">
               <thead>
                 <tr>
-                  <th
-                    scope="col"
-                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0"
-                  >
-                    NOMBRES
-                  </th>
-                  <th
-                    scope="col"
-                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-                  >
-                    EMPRESA
-                  </th>
-                  <th
-                    scope="col"
-                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-                  >
-                    CARGOS
-                  </th>
-                  <th
-                    scope="col"
-                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-                  >
-                    EMAIL
-                  </th>
-                  <th
-                    scope="col"
-                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-                  >
-                    TELEFONO
-                  </th>
-                  <th
-                    scope="col"
-                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-                  >
-                    SECTOR
-                  </th>
-                  <th
-                    scope="col"
-                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0"
-                  >
-                    TIPO CLIENTE
-                  </th>
-                  <th
-                    scope="col"
-                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"
-                  ></th>
+                  <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0">NOMBRES</th>
+                  <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">EMPRESA</th>
+                  <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">CARGOS</th>
+                  <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">EMAIL</th>
+                  <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">TELEFONO</th>
+                  <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">SECTOR</th>
+                  <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">TIPO CLIENTE</th>
+                  <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"></th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="cliente in clienteslist" :key="cliente.Id">
-                  <th
-                    class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0"
-                  >
+                <tr v-for="cliente in clienteslist" :key="cliente.id">
+                  <th class="shadow-none lh-1 fw-medium text-black-emphasis title ps-0">
                     <div class="d-flex align-items-center">
-                      <div
-                        class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16"
-                      >
-                        {{cliente.Nombre}}
+                      <div class="d-flex align-items-center ms-5 fs-md-15 fs-lg-16">
+                        {{ cliente.nombre }}
                       </div>
                     </div>
                   </th>
-                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                   {{cliente.Nombre}}
-                  </td>
-                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                    {{cliente.Nombre}}
-                  </td>
-                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                    {{cliente.Nombre}}
-                  </td>
-                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                    {{cliente.Nombre}}
-                  </td>
-                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                    {{cliente.Nombre}}
-                  </td>
-                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                    {{cliente.Nombre}}
-                  </td>
-                  <td
-                    class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0"
-                  >
+                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">{{ cliente.contacto }}</td>
+                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">{{ cliente.contacto }}</td>
+                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">{{ cliente.emailContacto }}</td>
+                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">{{ cliente.telefonoContacto }}</td>
+                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">{{ cliente.nombreCorto }}</td>
+                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">{{ cliente.idTipoCliente == 1 ? 'CLIENTE ACTUAL' : 'CLIENTE NUEVO' }}</td>
+                  <td class="shadow-none lh-1 fw-medium text-body-tertiary text-end pe-0">
                     <button
-                      class="dropdown-toggle lh-1 bg-transparent border-0 shadow-none p-0 transition"
-                      type="button"
-                      data-bs-toggle="dropdown"
-                      aria-expanded="false"
-                      @click="stateStoreInstance.createNewModal"
+                      class="btn btn-primary btn-sm"
+                      @click="stateStoreInstance.updateClientModal(cliente.id)"
                     >
-                      <i class="flaticon-dots"></i>
+                      Editar
                     </button>
                   </td>
                 </tr>
@@ -166,7 +103,6 @@ const {
               :totalRegister="totalRegister"
               @page-Changed="getPage"
             />
-            
           </div>
         </div>
       </div>
@@ -175,4 +111,3 @@ const {
     <LoadingModal v-if="isLoading" />
   </div>
 </template>
-  
