@@ -11,6 +11,8 @@ export const useClienteStore = defineStore("useCliente", () => {
   const totalPages = ref<number>(0);
   const clienteslist = ref<InfoClientePaginado[]>([]);
   const totalRegister = ref<number>(0);
+  const selectedClientId = ref<number>(0);
+  const nombrecliente = ref<string | null>(null);
 
   // Acciones
   const setClientes = (newClientes: InfoClientePaginado[]): void => {
@@ -75,7 +77,8 @@ export const useClienteStore = defineStore("useCliente", () => {
     totalPages,
     clienteslist,
     totalRegister,
-
+    selectedClientId,
+    nombrecliente,
     // Actions
     setClientes,
     setPage,

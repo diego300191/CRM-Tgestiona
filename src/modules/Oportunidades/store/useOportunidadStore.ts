@@ -35,6 +35,18 @@ export const useOportunidaStore = defineStore(
   }
 };
 
+  const getIdOportunidadStore = async (IdOportunidad: number): Promise<any> => {
+    try {
+      const { data }: AxiosResponse = await api.get(
+        `/Oportunidad/ObtenerOportunidad/${IdOportunidad}`
+      );
+      return data;
+    } catch (error) {
+      console.error("Error al obtener el Cliente:", error);
+      throw error;
+    }
+  };
+
     const BusquedaPaginado = async (infoFiltroBusqueda: InfoFiltro): Promise<void> => {
       try {
         oportunidadlist.value = [];
@@ -63,6 +75,7 @@ export const useOportunidaStore = defineStore(
       setPage,
       saveOportunidad,
       BusquedaPaginado,
+      getIdOportunidadStore,
       
     };
   }

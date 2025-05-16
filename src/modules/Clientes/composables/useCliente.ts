@@ -114,6 +114,8 @@ const getClientes = async (page: number): Promise<void> => {
 };
 
 export const useCliente = () => {
+
+  const { selectedClientId,    nombrecliente, } =    storeToRefs(store);
   // State
   const disabled = ref<boolean>(true);
   const nombres = ref<string>("");
@@ -279,6 +281,8 @@ export const useCliente = () => {
     frontOptions,
     tipoCliente,
     placeholder,
+    selectedClientId,    
+    nombrecliente,
     // Métodos
     ListClientees,
     routerAddCliente,

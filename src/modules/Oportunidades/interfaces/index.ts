@@ -1,5 +1,5 @@
 export interface InfoobjOportunidad {
-  id: number;
+  id: number|null;
   codigo: string;
   idCliente: number;
   idEstadoOportunidad: number;

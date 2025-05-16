@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/vue-query";
 import router from "@/router";
 import { storeToRefs } from "pinia";
 import { useOportunidaStore } from "@/modules/Oportunidades/store/useOportunidadStore";
+import { useClienteStore } from "@/modules/Clientes/store/useClienteStore";
 import {
   InfoobjOportunidad,
   InfoFiltro,
@@ -54,6 +55,8 @@ interface FrontOption {
 
 // Stores
 const store = useOportunidaStore();
+const storeCliente = useClienteStore();
+
 const nombreComboDinamico = ref<string>("Tipo Sucursal");
 const nombreBusqueda = ref<string | null>("");
 const placeholder = ref<string>("Seleccionar...");
@@ -89,6 +92,9 @@ const getOportunidad = async (page: number): Promise<void> => {
 
 export const useOportunidad = () => {
   // State
+
+const { selectedClientId,    nombrecliente, } =    storeToRefs(storeCliente);
+
   const disabled = ref<boolean>(true);
   const importe = ref<number>(0);
   const margen = ref<number>(0);
@@ -123,18 +129,22 @@ export const useOportunidad = () => {
   const selectSOLUCIONFM = ref<number>(0);
   const selectSUBTIPOSOLUCIONFM = ref<number>(0);
 
+  const IdEstadoOportunidad = ref<number>(0);
+  const NombreEstadoOportunidad = ref<string>("");
+
+
   // Métodos
   const BuscarFiltros = (): void => {
     const filters: InfoFiltro = {
-    IdEstadoOportunidad: -1,
-    IdCliente: -1,
-    IdSubTipoSolucionFm: -1,
-    Activo: true,
-    pagina: {
-      page: 0,
-      pageSize: 10,
-    },
-  };
+      IdEstadoOportunidad: -1,
+      IdCliente: -1,
+      IdSubTipoSolucionFm: -1,
+      Activo: true,
+      pagina: {
+        page: 0,
+        pageSize: 10,
+      },
+    };
 
     store.BusquedaPaginado(filters);
   };
@@ -143,7 +153,7 @@ export const useOportunidad = () => {
     const infoOportunidad: InfoobjOportunidad = {
       id: 0,
       codigo: "",
-      idCliente: 1,
+      idCliente: selectedClientId.value,
       idEstadoOportunidad: 1,
       idFuenteOrigen: selectFUENTEORIGEN.value,
       idTipoProspeccion: selectPROSPECCION.value,
@@ -177,18 +187,29 @@ export const useOportunidad = () => {
     { value: 3, label: "Opción 3" },
   ]);
 
-  //   const getIdCliente = (value: string): void => {
-  //     store.getCliente(parseInt(value)).then((data: Cliente) => {
-  //       idEmpresa.value = [data.idEmpresa];
-  //       idTipoSucursal.value = data.idTipoSucursal;
-  //       selected.value = data.idTipoSucursal;
-  //       nombre.value = data.nombre;
-  //       telefono.value = data.telefono;
-  //       direccion.value = data.direccion;
-  //       codigoEstablecimiento.value = data.codigoEstablecimiento;
-  //       activo.value = data.activo;
-  //     });
-  //   };
+  const getIdOportunidad = async (value: number): Promise<void> => {
+    const res: ApiResponse = await store.getIdOportunidadStore(value);
+    if (res.code === 200) {
+      selectFUENTEORIGEN.value = res.body.idFuenteOrigen;
+      selectPROSPECCION.value = res.body.idTipoProspeccion;
+      selectMEDIO.value = res.body.idTipoMedio;
+      selectUNIDAD.value = res.body.idUnidad;
+      selectBACK.value = res.body.idUsuarioBack;
+      selectPERSONAENCARGADA.value = res.body.idusuarioentrega;
+      selectSOLUCIONFM.value = res.body.idTipoSolucionFm;
+      selectSUBTIPOSOLUCIONFM.value = res.body.idSubTipoSolucionFm;
+      importe.value = res.body.importe;
+      margen.value = res.body.marge;
+      detalle.value = res.body.detalle;
+      servicio.value = res.body.servicio;
+      IdEstadoOportunidad.value = 4//res.body.idEstadoOportunidad;
+      NombreEstadoOportunidad.value = res.body.estadoOportunidad;
+      nombrecliente.value = res.body.cliente;
+      selectedClientId.value = res.body.idcliente;
+    } else {
+      console.log("Error al guardar", res.mensaje);
+    }
+  };
 
   const ListOportunidades = (): void => {
     router.push({ name: "Oportunidad-listOportunidad" });
@@ -275,6 +296,10 @@ export const useOportunidad = () => {
     margen,
     detalle,
     servicio,
+    IdEstadoOportunidad,
+    NombreEstadoOportunidad,
+    nombrecliente,
+    selectedClientId,
     // Métodos
     ListOportunidades,
     routerAddOportunidad,
@@ -282,7 +307,7 @@ export const useOportunidad = () => {
     Editar,
     BuscarFiltros,
     addOportinidad,
-    //getIdCliente,
+    getIdOportunidad,
 
     getPage: (page: number) => {
       store.setPage(page);

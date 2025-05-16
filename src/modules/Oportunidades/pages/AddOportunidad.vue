@@ -1,17 +1,17 @@
 <script lang="ts" setup>
 import BreadCrumb from "@/components/Common/BreadCrumb.vue";
-import { useRouter, useRoute } from "vue-router";
+import ModalBuscarCliente from "@/modules/Oportunidades/pages/ModalBuscarCliente.vue";
 import ComboDinamico from "@/components/Personalizados/ComboDinamico.vue";
 import useOportunidad from "@/modules/Oportunidades/composables/useOportunidad";
+import stateStore from "@/utils/store";
+import useCliente from "@/modules/Clientes/composables/useCliente";
+import { onMounted } from "vue";
 
-const router = useRouter();
+const {  nombrecliente,selectedClientId } = useCliente();
 
-const UpdateOportunidades = (val) => {
-  router.push({
-    name: "Oportunidad-updateOportunidad",
-    params: { id: val },
-  });
-};
+
+const stateStoreInstance = stateStore;
+
 const {
   IdMaestraFUENTEORIGEN,
   IdMaestraPROSPECCION,
@@ -42,8 +42,14 @@ const {
 margen,
 detalle,
 servicio,
-addOportinidad,
+addOportinidad
 } = useOportunidad();
+
+onMounted(()=> {
+nombrecliente.value = "";
+selectedClientId.value = 0;
+})
+
 </script>
 
 <template>
@@ -78,10 +84,13 @@ addOportinidad,
                 id="validationCustomUsername"
                 aria-describedby="inputGroupPrepend"
                 required
+                v-model="nombrecliente"
+                :disabled="true"
               />
               <span class="input-group-text" id="inputGroupPrepend">
                 <i
                   class="flaticon-search-interface-symbol position-relative"
+                  @click="stateStoreInstance.createNewModal"
                 ></i>
               </span>
             </div>
@@ -250,6 +259,7 @@ addOportinidad,
           </div>
         </div>
       </form>
+      <ModalBuscarCliente />
     </div>
   </div>
 </template>

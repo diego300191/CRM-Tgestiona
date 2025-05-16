@@ -35,8 +35,7 @@ const {
                 v-model="nombreBusqueda"
               />
               <button
-                type="submit"
-                class="bg-transparent text-primary transition p-0 border-0"
+                  class="bg-transparent text-primary transition p-0 border-0"
                 @click="BuscarFiltros()"
               >
                 <i class="flaticon-search-interface-symbol"></i>
