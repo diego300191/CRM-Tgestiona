@@ -19,6 +19,12 @@ isLoading,
 } = useOportunidad();
 
 
+// Función para manejar el enter en el buscador
+const handleSearch = (e: Event) => {
+  e.preventDefault(); // Previene el submit/refresh
+  BuscarFiltros();
+};
+
 </script>
 
 
@@ -35,9 +41,10 @@ isLoading,
                     type="text"
                     class="form-control shadow-none text-black rounded-0 border-0"
                     placeholder="Buscar Oportunidad"
+                    v-model="nombreBusqueda"
+                    @keyup.enter="handleSearch"
                   />
                   <button
-                    type="submit"
                     class="bg-transparent text-primary transition p-0 border-0"
                   >
                     <i class="flaticon-search-interface-symbol"></i>

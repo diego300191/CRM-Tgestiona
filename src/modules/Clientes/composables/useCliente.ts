@@ -83,39 +83,72 @@ const selectedEmpresas = ref<Empresa[]>();
 // selectedEmpresas.value = idempresadefault;
 
 // Función para obtener Clientees paginados
-const getClientes = async (page: number): Promise<void> => {
-  await new Promise((resolve) => {
-    setTimeout(() => resolve(true), 1000);
-  });
+// const getClientes = async (page: number): Promise<void> => {
+//   await new Promise((resolve) => {
+//     setTimeout(() => resolve(true), 1000);
+//   });
 
-  const size = 10;
+//   console.log(page);
+
+//   const size = 10;
+//   const { totalPages, totalRegister } = storeToRefs(store);
+
+//   const filters: InfoFiltro = {
+//     id: 1,
+//     nombre: nombreBusqueda.value || "",
+//     activo: true,
+//     idSector: -1,
+//     idTipoCliente: -1,
+//     pagina: {
+//       page: page -1,
+//       pageSize: size,
+//     },
+//   };
+
+//   const { data }: AxiosResponse<PaginationResponse> = await api.post(
+//     "/Common/ListaCliente",
+//     filters
+//   );
+
+//   totalPages.value = data.totalPage;
+//   totalRegister.value = data.totalRecord;
+//   return data.body;
+// };
+
+const getClientes = async (page: number) => {
   const { totalPages, totalRegister } = storeToRefs(store);
+  try {
+    const size = 10;
+    const filters: InfoFiltro = {
+      id: 1,
+      nombre: nombreBusqueda.value || "",
+      activo: true,
+      idSector: -1,
+      idTipoCliente: -1,
+      pagina: {
+        page: page - 1,
+        pageSize: size,
+      },
+    };
 
-  const filters: InfoFiltro = {
-    id: 1,
-    nombre: nombreBusqueda.value || "",
-    activo: true,
-    idSector: -1,
-    idTipoCliente: -1,
-    pagina: {
-      page: 0,
-      pageSize: size,
-    },
-  };
+    const { data } = await api.post<PaginationResponse>(
+      "/Common/ListaCliente",
+      filters
+    );
 
-  const { data }: AxiosResponse<PaginationResponse> = await api.post(
-    "/Common/ListaCliente",
-    filters
-  );
-
-  totalPages.value = data.totalPage;
-  totalRegister.value = data.totalRecord;
-  return data.body;
+    // Actualizar el store
+    store.setClientes(data.body || []);
+    totalPages.value = data.totalPage;
+    totalRegister.value = data.totalRecord;
+    return data.body;
+  } catch (error) {
+    console.error("Error al obtener clientes:", error);
+    throw error;
+  }
 };
 
 export const useCliente = () => {
-
-  const { selectedClientId,    nombrecliente, } =    storeToRefs(store);
+  const { selectedClientId, nombrecliente } = storeToRefs(store);
   // State
   const disabled = ref<boolean>(true);
   const nombres = ref<string>("");
@@ -133,27 +166,37 @@ export const useCliente = () => {
   // Variable reactiva con valor inicial
   const tipoCliente = ref<ClienteType>("actual");
   // Métodos
-  const BuscarFiltros = (): void => {
-    const filters: InfoFiltro = {
-      id: 0,
-      nombre: nombreBusqueda.value || "",
-      activo: true,
-      idSector: -1,
-      idTipoCliente: -1,
-      pagina: {
-        page: 0,
-        pageSize: 10,
-      },
-    };
 
-    store.BusquedaPaginado(filters);
+  // En tu composable useCliente.ts
+  const BuscarFiltros = async (sortField = "nombre", sortDirection = "asc") => {
+    isLoading.value = true;
+    try {
+      // Añade los parámetros de ordenamiento a tu llamada API
+      const filters: InfoFiltro = {
+        id: 0,
+        nombre: nombreBusqueda.value || "",
+        activo: true,
+        idSector: -1,
+        idTipoCliente: -1,
+        pagina: {
+          page: 0,
+          pageSize: 10,
+        },
+      };
+
+      const response = await store.BusquedaPaginado(filters);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      isLoading.value = false;
+    }
   };
 
-  const addCliente = async (IdCliente : number): Promise<void> => {
+  const addCliente = async (IdCliente: number): Promise<void> => {
     const infoCliente: InfoCliente = {
       Id: IdCliente == null ? 0 : IdCliente,
       IdSector: selectSECTOR.value,
-      IdTipoCliente: tipoCliente.value === 'actual' ? 1 : 2,
+      IdTipoCliente: tipoCliente.value === "actual" ? 1 : 2,
       Codigo: "",
       NombreCorto: nombres.value,
       Nombre: nombres.value,
@@ -175,11 +218,11 @@ export const useCliente = () => {
     }
   };
 
-  const getCliente = async (IdCliente : number): Promise<void> => {
+  const getCliente = async (IdCliente: number): Promise<void> => {
     const res: ApiResponse = await store.getClienteStore(IdCliente);
     if (res.code === 200) {
       selectSECTOR.value = res.body.idSector;
-      tipoCliente.value = res.body.idTipoCliente == 1 ? 'actual' : 'nuevo';
+      tipoCliente.value = res.body.idTipoCliente == 1 ? "actual" : "nuevo";
       nombres.value = res.body.nombre;
       empresa.value = res.body.contacto;
       telefonos.value = res.body.telefonoContacto;
@@ -218,8 +261,6 @@ export const useCliente = () => {
     router.push({ name: "administracion-listClientees" });
   };
 
-
-
   // Rutas
   const routerAddCliente = (): void => {
     router.push({ name: "administracion-addClientees" });
@@ -236,25 +277,18 @@ export const useCliente = () => {
   const { currentPages, totalPages, totalRegister, clienteslist } =
     storeToRefs(store);
 
-  // Configuración de la query
-  const { isLoading, data: clientes } = useQuery({
-    queryKey: ["clientes", currentPages.value],
+ // Configuración de la query
+  const {isLoading ,data: clientes } = useQuery({
+    queryKey: ['clientes', currentPages, nombreBusqueda],
     queryFn: () => getClientes(currentPages.value),
-    // Opciones disponibles en Vue Query
-    staleTime: 1000 * 60 * 5, // 5 minutos hasta considerar stale
-    gcTime: 1000 * 60 * 10, // 10 minutos en caché
   });
 
-  // Observar cambios en los datos y actualizar el store
-  watch(
-    clientes,
-    (newClientes) => {
-      if (newClientes) {
-        store.setClientes(newClientes);
-      }
-    },
-    { immediate: true }
-  );
+  // Observar cambios en los datos
+  watch(clientes, (newClientes) => {
+    if (newClientes) {
+      store.setClientes(newClientes);
+    }
+  });
 
   return {
     // State
@@ -281,7 +315,7 @@ export const useCliente = () => {
     frontOptions,
     tipoCliente,
     placeholder,
-    selectedClientId,    
+    selectedClientId,
     nombrecliente,
     // Métodos
     ListClientees,

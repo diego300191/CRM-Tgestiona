@@ -5,10 +5,9 @@ import ComboDinamico from "@/components/Personalizados/ComboDinamico.vue";
 import useOportunidad from "@/modules/Oportunidades/composables/useOportunidad";
 import stateStore from "@/utils/store";
 import useCliente from "@/modules/Clientes/composables/useCliente";
-import { onMounted } from "vue";
+import { computed, onMounted, watch } from "vue";
 
-const {  nombrecliente,selectedClientId } = useCliente();
-
+const { nombrecliente, selectedClientId } = useCliente();
 
 const stateStoreInstance = stateStore;
 
@@ -39,17 +38,17 @@ const {
   selectSUBTIPOSOLUCIONFM,
   placeholder,
   importe,
-margen,
-detalle,
-servicio,
-addOportinidad
+  margen,
+  detalle,
+  servicio,
+  opcionesSubTipo,
+  addOportinidad,
 } = useOportunidad();
 
-onMounted(()=> {
-nombrecliente.value = "";
-selectedClientId.value = 0;
-})
-
+onMounted(() => {
+  nombrecliente.value = "";
+  selectedClientId.value = 0;
+});
 </script>
 
 <template>
@@ -176,23 +175,54 @@ selectedClientId.value = 0;
             <ComboDinamico
               :idMaestra="IdMaestraSOLUCIONFM"
               :nombreMaestra="nombreMaestraSOLUCIONFM"
-              v-model:seleccionado="selectSOLUCIONFM"
+              v-model="selectSOLUCIONFM"
               :disabled="false"
               :placeholder="placeholder"
               :required="true"
-            >
-            </ComboDinamico>
+              :tieneIdPadre="'SI'"
+            />
           </div>
           <div class="col-md-4">
-            <ComboDinamico
-              :idMaestra="IdMaestraSUBTIPOSOLUCIONFM"
-              :nombreMaestra="nombreMaestraSUBTIPOSOLUCIONFM"
-              v-model:seleccionado="selectSUBTIPOSOLUCIONFM"
-              :disabled="false"
-              :placeholder="placeholder"
-              :required="true"
-            >
-            </ComboDinamico>
+            <div class="mb-3">
+              <label
+                :for="`select-maestra-${IdMaestraSUBTIPOSOLUCIONFM}`"
+                class="form-label fw-medium"
+              >
+                {{ nombreMaestraSUBTIPOSOLUCIONFM }}
+                <span v-if="true" class="text-danger">*</span>
+              </label>
+
+              <select
+                :id="`select-maestra-${IdMaestraSUBTIPOSOLUCIONFM}`"
+                class="form-select shadow-none fs-md-15"
+                :class="{
+                  'text-muted': selectSUBTIPOSOLUCIONFM === 0,
+                }"
+                v-model="selectSUBTIPOSOLUCIONFM"
+                :disabled="false"
+                :required="true"
+              >
+                <option :value="0" disabled class="text-muted">
+                  {{
+                    selectSOLUCIONFM
+                      ? placeholder
+                      : "Seleccione una solución primero"
+                  }}
+                </option>
+
+                <option
+                  v-for="opcion in opcionesSubTipo"
+                  :key="`option-${opcion.id}`"
+                  :value="opcion.id"
+                >
+                  {{ opcion.nombre }}
+                </option>
+              </select>
+
+              <div class="invalid-feedback">
+                Por favor selecciona una opción válida.
+              </div>
+            </div>
           </div>
         </div>
 

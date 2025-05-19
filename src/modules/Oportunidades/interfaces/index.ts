@@ -78,3 +78,9 @@ export interface InfoFiltro {
   Activo?: boolean;
   pagina?: Pagina;
 }
+
+export interface MaestraItem {
+  id: number;
+  nombre: string;
+  valorNumerico1: number | null;
+}

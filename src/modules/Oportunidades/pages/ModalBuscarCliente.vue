@@ -61,7 +61,7 @@ const selectClient = (clientId: number,nombreCliente: string): void => {
             </div>
 
             <!-- Tabla de resultados -->
-            <div class="table-responsive" v-if="clienteslist.length > 0">
+            <div class="table-responsive table-container" v-if="clienteslist.length > 0">
               <table class="table table-striped table-hover">
                 <thead>
                   <tr>
@@ -125,8 +125,41 @@ const selectClient = (clientId: number,nombreCliente: string): void => {
   margin: 0 auto;
 }
 
-.table {
+/* Estilos para el contenedor de la tabla con scroll */
+.table-container {
+  max-height: 400px; /* Altura máxima antes de aparecer el scroll */
+  overflow-y: auto; /* Habilitar scroll vertical */
   margin-top: 20px;
+  border: 1px solid #dee2e6; /* Borde opcional */
+  border-radius: 0.25rem; /* Bordes redondeados */
+}
+
+/* Estilo para el scroll */
+.table-container::-webkit-scrollbar {
+  width: 8px; /* Ancho del scroll */
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color de fondo del track */
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #888; /* Color del scroll */
+  border-radius: 4px;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color del scroll al pasar el mouse */
+}
+
+/* Mantener el header fijo */
+.table thead th {
+  position: sticky;
+  top: 0;
+  background-color: white; /* Mismo color que el fondo */
+  z-index: 10;
+  box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
 }
 
 .btn-sm {

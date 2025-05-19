@@ -21,7 +21,7 @@ export const useClienteStore = defineStore("useCliente", () => {
 
   const setPage = (page: number): void => {
     if (currentPages.value === page) return;
-    if (page <= 0) return;
+    if (page <= -1) return;
     currentPages.value = page;
   };
 

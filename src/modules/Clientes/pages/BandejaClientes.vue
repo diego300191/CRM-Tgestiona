@@ -18,6 +18,29 @@ const {
   getPage,
   BuscarFiltros,
 } = useCliente();
+
+// Variables para el ordenamiento
+const sortField = ref('nombre'); // Campo por defecto para ordenar
+const sortDirection = ref('asc'); // Dirección por defecto
+
+// Función para cambiar el ordenamiento
+const sortBy = (field: string) => {
+  if (sortField.value === field) {
+    sortDirection.value = sortDirection.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortField.value = field;
+    sortDirection.value = 'asc';
+  }
+  // Aquí deberías llamar a tu función de búsqueda/ordenamiento
+  // Puedes modificar BuscarFiltros para que acepte parámetros de ordenamiento
+  BuscarFiltros(sortField.value, sortDirection.value);
+};
+
+// Función para manejar el enter en el buscador
+const handleSearch = (e: Event) => {
+  e.preventDefault(); // Previene el submit/refresh
+  BuscarFiltros(sortField.value, sortDirection.value);
+};
 </script>
 
 <template>
@@ -26,17 +49,17 @@ const {
       <div class="card mb-25 border-0 rounded-0 bg-white letter-spacing">
         <div class="card-head box-shadow bg-white d-lg-flex align-items-center justify-content-between p-15 p-sm-20 p-md-25">
           <div class="d-flex align-items-center">
-            <form class="search-box position-relative me-15">
+            <form class="search-box position-relative me-15" @submit.prevent="handleSearch">
               <input
                 type="text"
                 class="form-control shadow-none text-black rounded-0 border-0"
                 placeholder="Buscar Cliente"
-                @keypress.enter="BuscarFiltros()"
                 v-model="nombreBusqueda"
+                @keyup.enter="handleSearch"
               />
               <button
-                  class="bg-transparent text-primary transition p-0 border-0"
-                @click="BuscarFiltros()"
+                class="bg-transparent text-primary transition p-0 border-0"
+                
               >
                 <i class="flaticon-search-interface-symbol"></i>
               </button>
@@ -58,11 +81,51 @@ const {
             <table class="table text-nowrap align-middle mb-0">
               <thead>
                 <tr>
-                  <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0">NOMBRES</th>
-                  <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">EMPRESA</th>
+                  <th 
+                    scope="col" 
+                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 ps-0 cursor-pointer"
+                    @click="sortBy('nombre')"
+                  >
+                    NOMBRES
+                    <i 
+                      v-if="sortField === 'nombre'" 
+                      :class="['ms-1', sortDirection === 'asc' ? 'flaticon-up-arrow' : 'flaticon-down-arrow']"
+                    ></i>
+                  </th>
+                  <th 
+                    scope="col" 
+                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 cursor-pointer"
+                    @click="sortBy('contacto')"
+                  >
+                    EMPRESA
+                    <i 
+                      v-if="sortField === 'contacto'" 
+                      :class="['ms-1', sortDirection === 'asc' ? 'flaticon-up-arrow' : 'flaticon-down-arrow']"
+                    ></i>
+                  </th>
                   <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">CARGOS</th>
-                  <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">EMAIL</th>
-                  <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">TELEFONO</th>
+                  <th 
+                    scope="col" 
+                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 cursor-pointer"
+                    @click="sortBy('emailContacto')"
+                  >
+                    EMAIL
+                    <i 
+                      v-if="sortField === 'emailContacto'" 
+                      :class="['ms-1', sortDirection === 'asc' ? 'flaticon-up-arrow' : 'flaticon-down-arrow']"
+                    ></i>
+                  </th>
+                  <th 
+                    scope="col" 
+                    class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 cursor-pointer"
+                    @click="sortBy('telefonoContacto')"
+                  >
+                    TELEFONO
+                    <i 
+                      v-if="sortField === 'telefonoContacto'" 
+                      :class="['ms-1', sortDirection === 'asc' ? 'flaticon-up-arrow' : 'flaticon-down-arrow']"
+                    ></i>
+                  </th>
                   <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">SECTOR</th>
                   <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0">TIPO CLIENTE</th>
                   <th scope="col" class="text-uppercase fw-medium shadow-none text-body-tertiary fs-13 pt-0 text-end pe-0"></th>
@@ -110,3 +173,12 @@ const {
     <LoadingModal v-if="isLoading" />
   </div>
 </template>
+
+<style scoped>
+.cursor-pointer {
+  cursor: pointer;
+}
+.cursor-pointer:hover {
+  background-color: #f5f5f5;
+}
+</style>

@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import api from "@/api/Api";
 import type { AxiosResponse } from "axios";
-import { InfoobjOportunidad, PaginationData,InfoFiltro,InfoOportunidadPaginado } from '../interfaces/index';
+import { InfoobjOportunidad, PaginationData,InfoFiltro,InfoOportunidadPaginado,MaestraItem } from '../interfaces/index';
 
 
 export const useOportunidaStore = defineStore(
@@ -13,6 +13,8 @@ export const useOportunidaStore = defineStore(
     const totalPages = ref<number>(0);
     const oportunidadlist = ref<InfoOportunidadPaginado[]>([]);
     const totalRegister = ref<number>(0);
+    const changeSolucionFM = ref<number>(0);
+    const opcionesSubTipo = ref<MaestraItem[]>([]);
 
     // Acciones
     const setOportunidades = (newOportunidades: InfoOportunidadPaginado[]): void => {
@@ -32,6 +34,25 @@ export const useOportunidaStore = defineStore(
   } catch (error) {
     console.error("Error al guardar Paciente:", error);
     throw error;
+  }
+};
+
+const cargarSubTipos = async (IdMaestraSUBTIPOSOLUCIONFM : number,idchangesolucionFM:number) => {
+  try {
+    opcionesSubTipo.value = [];
+    // Obtener datos de la API
+    const { data } = await api.get<{ body: MaestraItem[] }>(
+      `/Common/ObtenerMaestraDetalle/${IdMaestraSUBTIPOSOLUCIONFM}`
+    );
+    
+    // Filtrar opciones por el valorNumerico1 (que debe coincidir con idSolucion)
+    opcionesSubTipo.value = (data.body || []).filter(
+      item => item.valorNumerico1 === idchangesolucionFM
+    );
+    
+  } catch (error) {
+    console.error('Error al cargar subtipos:', error);
+    opcionesSubTipo.value = [];
   }
 };
 
@@ -69,6 +90,8 @@ export const useOportunidaStore = defineStore(
       totalPages,
       oportunidadlist,
       totalRegister,
+      changeSolucionFM,
+      opcionesSubTipo,
 
       // Actions
       setOportunidades,
@@ -76,6 +99,7 @@ export const useOportunidaStore = defineStore(
       saveOportunidad,
       BusquedaPaginado,
       getIdOportunidadStore,
+      cargarSubTipos,
       
     };
   }

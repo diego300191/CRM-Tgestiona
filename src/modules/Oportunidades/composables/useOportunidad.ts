@@ -8,6 +8,7 @@ import {
   InfoobjOportunidad,
   InfoFiltro,
   PaginationResponse,
+  MaestraItem,
 } from "../interfaces/index";
 import Swal from "sweetalert2";
 //import { useAuthStore } from "@/modules/Auth/store/useAuthStore";
@@ -61,15 +62,11 @@ const nombreComboDinamico = ref<string>("Tipo Sucursal");
 const nombreBusqueda = ref<string | null>("");
 const placeholder = ref<string>("Seleccionar...");
 
-const getOportunidad = async (page: number): Promise<void> => {
-  await new Promise((resolve) => {
-    setTimeout(() => resolve(true), 1000);
-  });
-
-  const size = 10;
+const getOportunidad = async (page: number) => {
   const { totalPages, totalRegister } = storeToRefs(store);
-
-  const filters: InfoFiltro = {
+  try {
+    const size = 10;
+    const filters: InfoFiltro = {
     IdEstadoOportunidad: -1,
     IdCliente: -1,
     IdSubTipoSolucionFm: -1,
@@ -80,20 +77,28 @@ const getOportunidad = async (page: number): Promise<void> => {
     },
   };
 
-  const { data }: AxiosResponse<PaginationResponse> = await api.post(
-    "/Oportunidad/ListaOportunidad",
-    filters
-  );
+    const { data } = await api.post<PaginationResponse>(
+      "/Oportunidad/ListaOportunidad",
+      filters
+    );
 
-  totalPages.value = 10;
-  totalRegister.value = data.totalRecord;
-  return data.body;
+    // Actualizar el store
+    store.setOportunidades(data.body || []);
+    totalPages.value = data.totalPage;
+    totalRegister.value = data.totalRecord;
+    return data.body;
+  } catch (error) {
+    console.error("Error al obtener clientes:", error);
+    throw error;
+  }
 };
+
 
 export const useOportunidad = () => {
   // State
 
 const { selectedClientId,    nombrecliente, } =    storeToRefs(storeCliente);
+const { opcionesSubTipo } =    storeToRefs(store);
 
   const disabled = ref<boolean>(true);
   const importe = ref<number>(0);
@@ -131,7 +136,9 @@ const { selectedClientId,    nombrecliente, } =    storeToRefs(storeCliente);
 
   const IdEstadoOportunidad = ref<number>(0);
   const NombreEstadoOportunidad = ref<string>("");
-
+  
+  
+  
 
   // Métodos
   const BuscarFiltros = (): void => {
@@ -172,13 +179,15 @@ const { selectedClientId,    nombrecliente, } =    storeToRefs(storeCliente);
       idUsuarioRegistro: 12,
     };
 
-    const res: ApiResponse = await store.saveOportunidad(infoOportunidad);
-    if (res.code === 200) {
-      swalSuccess("Se Guardo Correctamente");
-      routerUpdateOportunidades(res.body);
-    } else {
-      console.log("Error al guardar", res.mensaje);
-    }
+    console.log(infoOportunidad);
+
+    // const res: ApiResponse = await store.saveOportunidad(infoOportunidad);
+    // if (res.code === 200) {
+    //   swalSuccess("Se Guardo Correctamente");
+    //   routerUpdateOportunidades(res.body);
+    // } else {
+    //   console.log("Error al guardar", res.mensaje);
+    // }
   };
 
   const frontOptions = ref<FrontOption[]>([
@@ -236,24 +245,17 @@ const { selectedClientId,    nombrecliente, } =    storeToRefs(storeCliente);
     storeToRefs(store);
 
   // Configuración de la query
-  const { isLoading, data: oportunidades } = useQuery({
-    queryKey: ["oportunidades", currentPages.value],
-    queryFn: () => getOportunidad(currentPages.value),
-    // Opciones disponibles en Vue Query
-    staleTime: 1000 * 60 * 5, // 5 minutos hasta considerar stale
-    gcTime: 1000 * 60 * 10, // 10 minutos en caché
-  });
-
-  // Observar cambios en los datos y actualizar el store
-  watch(
-    oportunidades,
-    (newOportunidades) => {
+    const {isLoading ,data: oportunidades } = useQuery({
+      queryKey: ['oportunidades', currentPages, nombreBusqueda],
+      queryFn: () => getOportunidad(currentPages.value),
+    });
+  
+    // Observar cambios en los datos
+    watch(oportunidades, (newOportunidades) => {
       if (newOportunidades) {
         store.setOportunidades(newOportunidades);
       }
-    },
-    { immediate: true }
-  );
+    });
 
   return {
     // State
@@ -300,6 +302,7 @@ const { selectedClientId,    nombrecliente, } =    storeToRefs(storeCliente);
     NombreEstadoOportunidad,
     nombrecliente,
     selectedClientId,
+    opcionesSubTipo,
     // Métodos
     ListOportunidades,
     routerAddOportunidad,
@@ -308,7 +311,7 @@ const { selectedClientId,    nombrecliente, } =    storeToRefs(storeCliente);
     BuscarFiltros,
     addOportinidad,
     getIdOportunidad,
-
+    
     getPage: (page: number) => {
       store.setPage(page);
     },

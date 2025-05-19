@@ -2,6 +2,9 @@
 import { ref, watch, toRefs, defineProps, defineEmits, withDefaults } from "vue";
 import api from "@/api/Api";
 import type { AxiosResponse } from "axios";
+import { useOportunidaStore } from "@/modules/Oportunidades/store/useOportunidadStore";
+
+const storeOportunidad = useOportunidaStore();
 
 interface MaestraItem {
   id: number;
@@ -15,6 +18,7 @@ interface Props {
   disabled?: boolean;
   placeholder?: string;
   required?: boolean;
+  tieneIdPadre?:string;
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -31,7 +35,7 @@ const emit = defineEmits<{
   (event: "cargado"): void;
 }>();
 
-const { idMaestra, nombreMaestra, disabled } = toRefs(props);
+const { idMaestra, nombreMaestra, disabled,tieneIdPadre } = toRefs(props);
 
 const opciones = ref<MaestraItem[]>([]);
 const seleccionActual = ref(props.seleccionado);
@@ -48,6 +52,11 @@ watch(seleccionActual, (newVal) => {
   const textoSeleccionado = opciones.value.find(opt => opt.id === newVal)?.nombre || '';
   emit('update:seleccionado', newVal);
   emit('texto', textoSeleccionado);
+
+  if(tieneIdPadre.value === 'SI'){
+    storeOportunidad.cargarSubTipos(7,newVal);
+  }
+  
 });
 
 const cargarMaestra = async () => {
