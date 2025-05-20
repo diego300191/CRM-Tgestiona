@@ -134,7 +134,7 @@ const handleSearch = (e: Event) => {
                     </div>
                   </th>
                   <td class="shadow-none lh-1 fw-medium text-black-emphasis">Vigente</td>
-                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">{{ oportunidad.estadoOportunidad }}</td>
+                  <td class="shadow-none lh-1 fw-medium text-black-emphasis">{{ oportunidad.etapaOportunidad }}</td>
                   <td class="shadow-none lh-1 fw-medium text-black-emphasis">back</td>
                   <td class="shadow-none lh-1 fw-medium text-black-emphasis">front</td>
                   <td class="shadow-none lh-1 fw-medium text-black-emphasis">{{ oportunidad.telefonoContacto }}</td>

@@ -2,7 +2,7 @@ export interface InfoobjOportunidad {
   id: number|null;
   codigo: string;
   idCliente: number;
-  idEstadoOportunidad: number;
+  idEtapaOportunidad: number;
   idFuenteOrigen: number;
   idTipoProspeccion: number;
   idTipoMedio: number;
@@ -30,7 +30,7 @@ export interface InfoOportunidadPaginado {
   idTipoCliente: number;
   tipoCliente: string;
   idEstadoOportunidad: number;
-  estadoOportunidad: string;
+  etapaOportunidad: string;
   idFuenteOrigen: number;
   idTipoProspeccion: number;
   idTipoMedio: number;
@@ -72,7 +72,7 @@ interface Pagina {
 }
 
 export interface InfoFiltro {
-  IdEstadoOportunidad?: number;
+  IdEtapaOportunidad?: number;
   IdCliente?: number;
   IdSubTipoSolucionFm?: number;
   Activo?: boolean;

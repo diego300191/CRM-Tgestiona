@@ -67,15 +67,15 @@ const getOportunidad = async (page: number) => {
   try {
     const size = 10;
     const filters: InfoFiltro = {
-    IdEstadoOportunidad: -1,
-    IdCliente: -1,
-    IdSubTipoSolucionFm: -1,
-    Activo: true,
-    pagina: {
-      page: 0,
-      pageSize: size,
-    },
-  };
+      IdEtapaOportunidad: -1,
+      IdCliente: -1,
+      IdSubTipoSolucionFm: -1,
+      Activo: true,
+      pagina: {
+        page: page,
+        pageSize: size,
+      },
+    };
 
     const { data } = await api.post<PaginationResponse>(
       "/Oportunidad/ListaOportunidad",
@@ -93,12 +93,11 @@ const getOportunidad = async (page: number) => {
   }
 };
 
-
 export const useOportunidad = () => {
   // State
 
-const { selectedClientId,    nombrecliente, } =    storeToRefs(storeCliente);
-const { opcionesSubTipo } =    storeToRefs(store);
+  const { selectedClientId, nombrecliente } = storeToRefs(storeCliente);
+  const { opcionesSubTipo } = storeToRefs(store);
 
   const disabled = ref<boolean>(true);
   const importe = ref<number>(0);
@@ -110,7 +109,7 @@ const { opcionesSubTipo } =    storeToRefs(store);
   const IdMaestraFUENTEORIGEN = ref<number>(5);
   const IdMaestraPROSPECCION = ref<number>(2);
   const IdMaestraMEDIO = ref<number>(3);
-  const IdMaestraUNIDAD = ref<number>(1);
+  const IdMaestraUNIDAD = ref<number>(9);
   const IdMaestraBACK = ref<number>(1);
   const IdMaestraPERSONAENCARGADA = ref<number>(1);
   const IdMaestraSOLUCIONFM = ref<number>(6);
@@ -136,14 +135,11 @@ const { opcionesSubTipo } =    storeToRefs(store);
 
   const IdEstadoOportunidad = ref<number>(0);
   const NombreEstadoOportunidad = ref<string>("");
-  
-  
-  
 
   // Métodos
   const BuscarFiltros = (): void => {
     const filters: InfoFiltro = {
-      IdEstadoOportunidad: -1,
+      IdEtapaOportunidad: -1,
       IdCliente: -1,
       IdSubTipoSolucionFm: -1,
       Activo: true,
@@ -161,7 +157,7 @@ const { opcionesSubTipo } =    storeToRefs(store);
       id: 0,
       codigo: "",
       idCliente: selectedClientId.value,
-      idEstadoOportunidad: 1,
+      idEtapaOportunidad: 1,
       idFuenteOrigen: selectFUENTEORIGEN.value,
       idTipoProspeccion: selectPROSPECCION.value,
       idTipoMedio: selectMEDIO.value,
@@ -178,16 +174,14 @@ const { opcionesSubTipo } =    storeToRefs(store);
       activo: true,
       idUsuarioRegistro: 12,
     };
-
-    console.log(infoOportunidad);
-
-    // const res: ApiResponse = await store.saveOportunidad(infoOportunidad);
-    // if (res.code === 200) {
-    //   swalSuccess("Se Guardo Correctamente");
-    //   routerUpdateOportunidades(res.body);
-    // } else {
-    //   console.log("Error al guardar", res.mensaje);
-    // }
+    
+    const res: ApiResponse = await store.saveOportunidad(infoOportunidad);
+    if (res.code === 200) {
+      swalSuccess("Se Guardo Correctamente");
+      routerUpdateOportunidades(res.body);
+    } else {
+      console.log("Error al guardar", res.mensaje);
+    }
   };
 
   const frontOptions = ref<FrontOption[]>([
@@ -211,14 +205,16 @@ const { opcionesSubTipo } =    storeToRefs(store);
       margen.value = res.body.marge;
       detalle.value = res.body.detalle;
       servicio.value = res.body.servicio;
-      IdEstadoOportunidad.value = 4//res.body.idEstadoOportunidad;
-      NombreEstadoOportunidad.value = res.body.estadoOportunidad;
+      IdEstadoOportunidad.value = 4; //res.body.idEstadoOportunidad;
+      NombreEstadoOportunidad.value = res.body.etapaOportunidad;
       nombrecliente.value = res.body.cliente;
       selectedClientId.value = res.body.idcliente;
     } else {
       console.log("Error al guardar", res.mensaje);
     }
   };
+
+
 
   const ListOportunidades = (): void => {
     router.push({ name: "Oportunidad-listOportunidad" });
@@ -245,17 +241,17 @@ const { opcionesSubTipo } =    storeToRefs(store);
     storeToRefs(store);
 
   // Configuración de la query
-    const {isLoading ,data: oportunidades } = useQuery({
-      queryKey: ['oportunidades', currentPages, nombreBusqueda],
-      queryFn: () => getOportunidad(currentPages.value),
-    });
-  
-    // Observar cambios en los datos
-    watch(oportunidades, (newOportunidades) => {
-      if (newOportunidades) {
-        store.setOportunidades(newOportunidades);
-      }
-    });
+  const { isLoading, data: oportunidades } = useQuery({
+    queryKey: ["oportunidades", currentPages, nombreBusqueda],
+    queryFn: () => getOportunidad(currentPages.value),
+  });
+
+  // Observar cambios en los datos
+  watch(oportunidades, (newOportunidades) => {
+    if (newOportunidades) {
+      store.setOportunidades(newOportunidades);
+    }
+  });
 
   return {
     // State

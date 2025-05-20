@@ -49,6 +49,7 @@ onMounted(() => {
   nombrecliente.value = "";
   selectedClientId.value = 0;
 });
+
 </script>
 
 <template>
@@ -175,7 +176,7 @@ onMounted(() => {
             <ComboDinamico
               :idMaestra="IdMaestraSOLUCIONFM"
               :nombreMaestra="nombreMaestraSOLUCIONFM"
-              v-model="selectSOLUCIONFM"
+              v-model:seleccionado="selectSOLUCIONFM"
               :disabled="false"
               :placeholder="placeholder"
               :required="true"

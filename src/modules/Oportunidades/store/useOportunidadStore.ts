@@ -9,7 +9,7 @@ export const useOportunidaStore = defineStore(
   "useOportunidad",
   () => {
     // Estado tipado
-    const currentPages = ref<number>(1);
+    const currentPages = ref<number>(0);
     const totalPages = ref<number>(0);
     const oportunidadlist = ref<InfoOportunidadPaginado[]>([]);
     const totalRegister = ref<number>(0);
@@ -50,6 +50,8 @@ const cargarSubTipos = async (IdMaestraSUBTIPOSOLUCIONFM : number,idchangesoluci
       item => item.valorNumerico1 === idchangesolucionFM
     );
     
+console.log(opcionesSubTipo.value);
+
   } catch (error) {
     console.error('Error al cargar subtipos:', error);
     opcionesSubTipo.value = [];

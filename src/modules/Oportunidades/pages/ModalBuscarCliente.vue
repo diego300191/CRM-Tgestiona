@@ -22,7 +22,6 @@ const searched = ref<boolean>(false);
 const selectClient = (clientId: number,nombreCliente: string): void => {
   selectedClientId.value = clientId;
   nombrecliente.value = nombreCliente;
-  console.log("Cliente seleccionado:", clientId);
 };
 </script>
 
