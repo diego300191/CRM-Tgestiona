@@ -137,7 +137,6 @@ watch(idMaestra, cargarMaestra, { immediate: true });
 
 <style scoped>
 .form-select:disabled {
-  background-color: #f8f9fa;
   cursor: not-allowed;
 }
 
@@ -149,4 +148,5 @@ watch(idMaestra, cargarMaestra, { immediate: true });
 .is-invalid ~ div > .invalid-feedback {
   display: block;
 }
+
 </style>

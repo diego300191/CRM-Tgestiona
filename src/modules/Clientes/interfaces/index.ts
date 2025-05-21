@@ -21,10 +21,13 @@ contacto : string;
 emailContacto : string;
 id : number;
 idSector:number;
+sector:string;
 idTipoCliente : number;
+tipoCliente:string;
 nombre:string;
 nombreCorto : string;
 telefonoContacto:string;
+cargo:string;
 }
 
 

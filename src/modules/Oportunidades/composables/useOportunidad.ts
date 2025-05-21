@@ -9,6 +9,9 @@ import {
   InfoFiltro,
   PaginationResponse,
   MaestraItem,
+  infoActividadesOportunidad,
+  responseActividadOportunidad,
+  infoHistorialHorasOportunidad,
 } from "../interfaces/index";
 import Swal from "sweetalert2";
 //import { useAuthStore } from "@/modules/Auth/store/useAuthStore";
@@ -97,7 +100,7 @@ export const useOportunidad = () => {
   // State
 
   const { selectedClientId, nombrecliente } = storeToRefs(storeCliente);
-  const { opcionesSubTipo } = storeToRefs(store);
+  const { opcionesSubTipo, IdEstadoOportunidad } = storeToRefs(store);
 
   const disabled = ref<boolean>(true);
   const importe = ref<number>(0);
@@ -133,8 +136,19 @@ export const useOportunidad = () => {
   const selectSOLUCIONFM = ref<number>(0);
   const selectSUBTIPOSOLUCIONFM = ref<number>(0);
 
-  const IdEstadoOportunidad = ref<number>(0);
   const NombreEstadoOportunidad = ref<string>("");
+  const configuracionEtapaVal = ref<[]>([]);
+
+  const descripcionActividad = ref<string>("");
+  const tipoActividad = ref<string>("");
+  const fechaActividad = ref<null>(null);
+  const listaActividadesOportunidad = ref<responseActividadOportunidad>();
+  const listaHistorialHorasOportunidad = ref<infoHistorialHorasOportunidad>();
+
+  const descripcionHistorialHoras = ref<string>("");
+  const horas = ref<number>(0);
+  const fechaHistorialHoras = ref<null>(null);
+  const IdUsuarioRegistroHistorial = ref<number>(1);
 
   // Métodos
   const BuscarFiltros = (): void => {
@@ -152,12 +166,15 @@ export const useOportunidad = () => {
     store.BusquedaPaginado(filters);
   };
 
-  const addOportinidad = async (): Promise<void> => {
+  const addOportinidad = async (
+    valorId: number,
+    IdEstadoOportunidaval: number
+  ): Promise<void> => {
     const infoOportunidad: InfoobjOportunidad = {
-      id: 0,
+      id: valorId,
       codigo: "",
       idCliente: selectedClientId.value,
-      idEtapaOportunidad: 1,
+      idEtapaOportunidad: IdEstadoOportunidaval,
       idFuenteOrigen: selectFUENTEORIGEN.value,
       idTipoProspeccion: selectPROSPECCION.value,
       idTipoMedio: selectMEDIO.value,
@@ -174,11 +191,69 @@ export const useOportunidad = () => {
       activo: true,
       idUsuarioRegistro: 12,
     };
-    
+
     const res: ApiResponse = await store.saveOportunidad(infoOportunidad);
     if (res.code === 200) {
+      if (valorId == 0) {
+        swalSuccess("Se Guardo Correctamente");
+        routerUpdateOportunidades(res.body);
+      } else {
+        swalSuccess("Se Actualizo Correctamente");
+        await getIdOportunidad(valorId);
+      }
+    } else {
+      console.log("Error al guardar", res.mensaje);
+    }
+  };
+
+  const addActividadesOportunidad = async (ValId: number): Promise<void> => {
+    const objActividadOportunidad: infoActividadesOportunidad = {
+      id: 0,
+      tipoGestion: tipoActividad.value,
+      comentario: descripcionActividad.value,
+      idOportunidad: ValId,
+      IdEtapaOportunidad: IdEstadoOportunidad.value,
+      idUsuarioRegistro: 1,
+      FechaActividad: fechaActividad.value,
+      activo: true,
+    };
+    const res: ApiResponse = await store.saveActividadOportunidades(
+      objActividadOportunidad
+    );
+    if (res.code === 200) {
       swalSuccess("Se Guardo Correctamente");
-      routerUpdateOportunidades(res.body);
+      await getActividadIdOportunidad(ValId);
+      await getHistorialHorasIdOportunidad(ValId);
+      tipoActividad.value = "";
+      descripcionActividad.value = "";
+      fechaActividad.value = null;
+    } else {
+      console.log("Error al guardar", res.mensaje);
+    }
+  };
+
+  const addHistorialHorasOportunidad = async (ValId: number): Promise<void> => {
+    const objHistorialHorasOportunidad: infoHistorialHorasOportunidad = {
+      id: 0,
+      Descripcion: descripcionHistorialHoras.value,
+      idOportunidad: ValId,
+      fecha: fechaHistorialHoras.value,
+      hora: horas.value,
+      idUsuarioRegistro: 1,
+      IdUsuarioHoras: IdUsuarioRegistroHistorial.value,
+      activo: true,
+    };
+
+    console.log(objHistorialHorasOportunidad);
+    const res: ApiResponse = await store.saveHistorialHorasOportunidadStore(
+      objHistorialHorasOportunidad
+    );
+    if (res.code === 200) {
+      swalSuccess("Se Guardo Correctamente");
+      await getHistorialHorasIdOportunidad(ValId);
+      tipoActividad.value = "";
+      descripcionActividad.value = "";
+      fechaActividad.value = null;
     } else {
       console.log("Error al guardar", res.mensaje);
     }
@@ -192,6 +267,8 @@ export const useOportunidad = () => {
 
   const getIdOportunidad = async (value: number): Promise<void> => {
     const res: ApiResponse = await store.getIdOportunidadStore(value);
+    await getActividadIdOportunidad(value);
+    await getHistorialHorasIdOportunidad(value);
     if (res.code === 200) {
       selectFUENTEORIGEN.value = res.body.idFuenteOrigen;
       selectPROSPECCION.value = res.body.idTipoProspeccion;
@@ -205,16 +282,40 @@ export const useOportunidad = () => {
       margen.value = res.body.marge;
       detalle.value = res.body.detalle;
       servicio.value = res.body.servicio;
-      IdEstadoOportunidad.value = 4; //res.body.idEstadoOportunidad;
+      IdEstadoOportunidad.value = res.body.idEtapaOportunidad;
       NombreEstadoOportunidad.value = res.body.etapaOportunidad;
       nombrecliente.value = res.body.cliente;
       selectedClientId.value = res.body.idcliente;
+      configuracionEtapaVal.value = res.body.configuracionEtapa;
     } else {
       console.log("Error al guardar", res.mensaje);
     }
   };
 
-
+  const getActividadIdOportunidad = async (
+    ValIdOportunidad: number
+  ): Promise<void> => {
+    const res: ApiResponse = await store.getActividadIdOportunidadStore(
+      ValIdOportunidad
+    );
+    if (res.code === 200) {
+      listaActividadesOportunidad.value = res.body;
+    } else {
+      console.log("Error al guardar", res.mensaje);
+    }
+  };
+  const getHistorialHorasIdOportunidad = async (
+    ValIdOportunidad: number
+  ): Promise<void> => {
+    const res: ApiResponse = await store.getHistorialHorasIdOportunidadStore(
+      ValIdOportunidad
+    );
+    if (res.code === 200) {
+      listaHistorialHorasOportunidad.value = res.body;
+    } else {
+      console.log("Error al guardar", res.mensaje);
+    }
+  };
 
   const ListOportunidades = (): void => {
     router.push({ name: "Oportunidad-listOportunidad" });
@@ -299,6 +400,16 @@ export const useOportunidad = () => {
     nombrecliente,
     selectedClientId,
     opcionesSubTipo,
+    configuracionEtapaVal,
+    descripcionActividad,
+    tipoActividad,
+    fechaActividad,
+    listaActividadesOportunidad,
+    descripcionHistorialHoras,
+    horas,
+    fechaHistorialHoras,
+    IdUsuarioRegistroHistorial,
+    listaHistorialHorasOportunidad,
     // Métodos
     ListOportunidades,
     routerAddOportunidad,
@@ -307,7 +418,9 @@ export const useOportunidad = () => {
     BuscarFiltros,
     addOportinidad,
     getIdOportunidad,
-    
+    addActividadesOportunidad,
+    addHistorialHorasOportunidad,
+    getHistorialHorasIdOportunidad,
     getPage: (page: number) => {
       store.setPage(page);
     },

@@ -43,6 +43,18 @@ const {
   nombrecliente,
   ListOportunidades,
   getIdOportunidad,
+  addOportinidad,
+  configuracionEtapaVal,
+  addActividadesOportunidad,
+  descripcionActividad,
+  tipoActividad,
+  fechaActividad,
+  listaActividadesOportunidad,
+  descripcionHistorialHoras,
+  horas,
+  fechaHistorialHoras,
+  listaHistorialHorasOportunidad,
+  addHistorialHorasOportunidad,
 } = useOportunidad();
 
 const UpdateOportunidades = (val: number) => {
@@ -55,49 +67,107 @@ onMounted(async () => {
   );
 });
 
-const estadosOrdenados = [
-  { id: 1, nombre: 'OPORTUNIDAD DETECTADA' }, 
-  { id: 2, nombre: 'EN ELABORACIÓN DE PROPUESTA' },
-  { id: 3, nombre: 'COTIZADO - PRESENTADO' },
-  { id: 4, nombre: 'COTIZADO - EN NEGOCIACIÓN' },
-  { id: 5, nombre: 'COTIZADO - ADJUDICADO' },
-  { id: 6, nombre: 'COTIZADO - NO ADJUDICADO' },
-  { id: 7, nombre: 'NO PRESENTADO' },
-  { id: 8, nombre: 'SUSPENDIDO' },
-  { id: 9, nombre: 'DESESTIMADO' }
-];
+function formatDateToDDMMYYYY(isoDate: string): string {
+  const date = new Date(isoDate);
 
+  // Extract day, month, and year
+  const day = String(date.getDate()).padStart(2, "0"); // Ensures two digits (e.g., "05")
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // getMonth() is zero-based
+  const year = date.getFullYear();
+
+  // Return formatted date
+  return `${day}-${month}-${year}`;
+}
 // Estado siguiente (botón principal)
 const estadoSiguiente = computed(() => {
-  const indexActual = estadosOrdenados.findIndex(
-    (e) => e.id === IdEstadoOportunidad.value
-  );
-  return indexActual < estadosOrdenados.length - 1
-    ? estadosOrdenados[indexActual + 1]
-    : null;
+  if (!configuracionEtapaVal.value) return null;
+
+  return {
+    id: configuracionEtapaVal.value.idEtapaSiguiente,
+    nombre: configuracionEtapaVal.value.etapaSiguiente,
+  };
 });
 
 // Estado anterior (botón "Regresar")
 const estadoAnterior = computed(() => {
-  const indexActual = estadosOrdenados.findIndex(
-    (e) => e.id === IdEstadoOportunidad.value
-  );
-  return indexActual > 0 ? estadosOrdenados[indexActual - 1] : null;
+  if (!configuracionEtapaVal.value) return null;
+
+  return {
+    id: configuracionEtapaVal.value.idEtapaAnterior,
+    nombre: configuracionEtapaVal.value.etapaAnterior,
+  };
+});
+
+// Estado de rechazo (podrías añadirlo si necesitas)
+const estadoRechazo = computed(() => {
+  if (!configuracionEtapaVal.value) return null;
+
+  return {
+    id: configuracionEtapaVal.value.idEtapaRechaza,
+    nombre: configuracionEtapaVal.value.etapaRechaza,
+  };
 });
 
 const avanzarEstado = () => {
   if (estadoSiguiente.value) {
+    addOportinidad(
+      parseInt(router.currentRoute.value.params.id.toString()),
+      estadoSiguiente.value.id
+    );
+    // Actualizar el estado local si es necesario
     IdEstadoOportunidad.value = estadoSiguiente.value.id;
-    //Llamar cambio de estado
   }
 };
 
 const retrocederEstado = () => {
   if (estadoAnterior.value) {
+    addOportinidad(
+      parseInt(router.currentRoute.value.params.id.toString()),
+      estadoAnterior.value.id
+    );
+    // Actualizar el estado local si es necesario
     IdEstadoOportunidad.value = estadoAnterior.value.id;
-    //Llamar cambio de estado
   }
 };
+function calcularTiempo(Fecha: string | Date): string {
+  const fechaCalcular: Date = Fecha instanceof Date ? Fecha : new Date(Fecha);
+  const hoy: Date = new Date();
+
+  const tiempoPasado: number = hoy.getTime() - fechaCalcular.getTime();
+
+  const segs = 1000;
+  const mins = segs * 60;
+  const hours = mins * 60;
+  const days = hours * 24;
+  const months = days * 30.416666666666668;
+  const years = months * 12;
+
+  const anos = Math.floor(tiempoPasado / years);
+
+  let remainingTime = tiempoPasado - anos * years;
+  const meses = Math.floor(remainingTime / months);
+
+  remainingTime = remainingTime - meses * months;
+  const dias = Math.floor(remainingTime / days);
+
+  remainingTime = remainingTime - dias * days;
+  const horas = Math.floor(remainingTime / hours);
+
+  remainingTime = remainingTime - horas * hours;
+  const minutos = Math.floor(remainingTime / mins);
+
+  remainingTime = remainingTime - minutos * mins;
+  const segundos = Math.floor(remainingTime / segs);
+
+  if (anos > 0) return `${anos} Años`;
+  if (meses > 0) return `${meses} Meses`;
+  if (dias > 0) return `${dias} Días`;
+  if (horas > 0) return `${horas} Horas`;
+  if (minutos > 0) return `${minutos} Minutos`;
+  if (segundos > 0) return `${segundos} Segundos`;
+
+  return "0 Segundos";
+}
 </script>
 
 <template>
@@ -143,7 +213,13 @@ const retrocederEstado = () => {
         </div>
 
         <!-- Botón de estado anterior (solo si no es el estado inicial) -->
-        <div v-if="estadoAnterior && IdEstadoOportunidad > 2">
+        <div
+          v-if="
+            estadoAnterior &&
+            configuracionEtapaVal?.idEtapaAnterior &&
+            NombreEstadoOportunidad != 'OPORTUNIDAD DETECTADA'
+          "
+        >
           <button
             class="default-btn transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 rounded-1 bg-secondary ms-2"
             @click="retrocederEstado"
@@ -445,6 +521,7 @@ const retrocederEstado = () => {
                               class="form-control shadow-none fs-md-15 text-black"
                               id="servicio"
                               rows="3"
+                              v-model="descripcionActividad"
                             ></textarea>
                           </div>
                         </div>
@@ -458,6 +535,7 @@ const retrocederEstado = () => {
                               type="text"
                               class="form-control shadow-none fs-md-15 text-black"
                               id="buscarCliente"
+                              v-model="tipoActividad"
                             />
                           </div>
                         </div>
@@ -469,13 +547,20 @@ const retrocederEstado = () => {
                           <input
                             type="date"
                             class="form-control shadow-none text-black fs-md-15"
+                            v-model="fechaActividad"
                           />
                         </div>
                         <div class="col-md-4">
                           <button
                             class="default-btn transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-12 pb-md-12 ps-md-30 pe-md-30 rounded-1 bg-success fs-md-15 fs-lg-16"
                             type="button"
-                            @click="UpdateOportunidades(1)"
+                            @click="
+                              addActividadesOportunidad(
+                                parseInt(
+                                  router.currentRoute.value.params.id.toString()
+                                )
+                              )
+                            "
                           >
                             AGREGAR
                           </button>
@@ -493,88 +578,54 @@ const retrocederEstado = () => {
                                 ACTIVIDAD RECIENTE
                               </h5>
                             </div>
-                            <ul class="list ps-0 mb-0 list-unstyled">
+                            <ul
+                              class="list ps-0 mb-0 list-unstyled"
+                              v-for="actividad in listaActividadesOportunidad"
+                              :key="actividad.id"
+                            >
                               <li
                                 class="position-relative fw-medium text-dark-emphasis"
                               >
                                 <div
                                   class="icon position-absolute start-0 rounded-circle text-center"
                                 >
-                                  <i class="ph-duotone ph-envelope-simple"></i>
+                                  <i
+                                    v-if="
+                                      actividad.tipoGestion
+                                        ?.toLowerCase()
+                                        .includes('correo')
+                                    "
+                                    class="ph-duotone ph-envelope-simple"
+                                  ></i>
+                                  <i
+                                    v-else-if="
+                                      actividad.tipoGestion
+                                        ?.toLowerCase()
+                                        .includes('reunion') ||
+                                      actividad.tipoGestion
+                                        ?.toLowerCase()
+                                        .includes('reunión')
+                                    "
+                                    class="ph-duotone ph-first-aid-kit"
+                                  ></i>
+                                  <i
+                                    v-else
+                                    class="ph-duotone ph-check-circle"
+                                  ></i>
                                 </div>
-                                <span class="text-black fw-bold">J. Ronan</span>
-                                sent an Email
-                                <span class="d-block fs-13 mt-1"
-                                  >35 mins ago</span
-                                >
-                              </li>
-                              <li
-                                class="position-relative fw-medium text-dark-emphasis"
-                              >
-                                <div
-                                  class="icon position-absolute start-0 rounded-circle text-center"
-                                >
-                                  <i class="ph-duotone ph-first-aid-kit"></i>
-                                </div>
-                                <span class="text-black fw-bold">Victoria</span>
-                                archived a
-                                <span class="text-black fw-bold"
-                                  >Board for Project</span
-                                >
-                                in team
-                                <span class="d-block fs-13 mt-1">1 hr ago</span>
-                              </li>
-                              <li
-                                class="position-relative fw-medium text-dark-emphasis"
-                              >
-                                <div
-                                  class="icon position-absolute start-0 rounded-circle text-center"
-                                >
-                                  <i class="ph-duotone ph-check-circle"></i>
-                                </div>
-                                <span class="text-black fw-bold"
-                                  >Walter White</span
-                                >
-                                completed the project
-                                <span class="text-black fw-bold"
-                                  >“The Dashboard”</span
-                                >
-                                <span class="d-block fs-13 mt-1"
-                                  >2 hrs ago</span
-                                >
-                              </li>
-                              <li
-                                class="position-relative fw-medium text-dark-emphasis"
-                              >
-                                <div
-                                  class="icon position-absolute start-0 rounded-circle text-center"
-                                >
-                                  <i class="ph-duotone ph-shield-plus"></i>
-                                </div>
-                                <span class="text-black fw-bold">Jennifer</span>
-                                added
-                                <span class="text-black fw-bold">Micheal</span>
-                                in the project
-                                <span class="text-black fw-bold"
-                                  >“The Adlash Design”</span
-                                >
-                                <span class="d-block fs-13 mt-1"
-                                  >3 hrs ago</span
-                                >
-                              </li>
-                              <li
-                                class="position-relative fw-medium text-dark-emphasis"
-                              >
-                                <div
-                                  class="icon position-absolute start-0 rounded-circle text-center"
-                                >
-                                  <i class="ph-duotone ph-envelope-simple"></i>
-                                </div>
-                                <span class="text-black fw-bold">S. Smith</span>
-                                sent an Email
-                                <span class="d-block fs-13 mt-1"
-                                  >1 day ago</span
-                                >
+                                <span class="text-black fw-bold">{{
+                                  actividad.usuarioRegistro
+                                }}</span>
+                                {{ actividad.tipoGestion }}
+                                <span class="d-block fs-13 mt-1">{{
+                                  actividad.comentario
+                                }}</span>
+                                <span class="d-block fs-13 mt-1">{{
+                                  formatDateToDDMMYYYY(actividad.fechaActividad)
+                                }}</span>
+                                <span class="d-block fs-13 mt-1">{{
+                                  calcularTiempo(actividad.fechaRegistro)
+                                }}</span>
                               </li>
                             </ul>
                           </div>
@@ -605,7 +656,11 @@ const retrocederEstado = () => {
               <div class="row g-3 mb-4">
                 <div class="col-md-3">
                   <label class="form-label fw-medium">Fecha</label>
-                  <input type="date" class="form-control shadow-none" />
+                  <input
+                    type="date"
+                    class="form-control shadow-none"
+                    v-model="fechaHistorialHoras"
+                  />
                 </div>
                 <div class="col-md-3">
                   <label class="form-label fw-medium">Horas</label>
@@ -613,6 +668,7 @@ const retrocederEstado = () => {
                     type="number"
                     class="form-control shadow-none"
                     placeholder="0.00"
+                    v-model="horas"
                   />
                 </div>
                 <div class="col-md-4">
@@ -621,10 +677,20 @@ const retrocederEstado = () => {
                     type="text"
                     class="form-control shadow-none"
                     placeholder="Descripción de la actividad"
+                    v-model="descripcionHistorialHoras"
                   />
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
-                  <button class="btn btn-success">Agregar</button>
+                  <button
+                    class="btn btn-success"
+                    @click="
+                      addHistorialHorasOportunidad(
+                        parseInt(router.currentRoute.value.params.id.toString())
+                      )
+                    "
+                  >
+                    Agregar
+                  </button>
                 </div>
               </div>
 
@@ -641,11 +707,11 @@ const retrocederEstado = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr>
-                      <td>15/05/2023</td>
-                      <td>2.50</td>
-                      <td>Reunión con cliente</td>
-                      <td>Juan Pérez</td>
+                    <tr v-for="historialhoras in listaHistorialHorasOportunidad" :key="historialhoras.id"> 
+                      <td>{{historialhoras.fecha}}</td>
+                      <td>{{historialhoras.hora}}</td>
+                      <td>{{historialhoras.descripcion}}</td>
+                      <td>{{historialhoras.idUsuarioHoras}}</td>
                       <td>
                         <button class="btn btn-sm btn-outline-primary me-2">
                           Editar
@@ -655,20 +721,7 @@ const retrocederEstado = () => {
                         </button>
                       </td>
                     </tr>
-                    <tr>
-                      <td>14/05/2023</td>
-                      <td>4.00</td>
-                      <td>Elaboración de propuesta</td>
-                      <td>María Gómez</td>
-                      <td>
-                        <button class="btn btn-sm btn-outline-primary me-2">
-                          Editar
-                        </button>
-                        <button class="btn btn-sm btn-outline-danger">
-                          Eliminar
-                        </button>
-                      </td>
-                    </tr>
+               
                   </tbody>
                 </table>
               </div>

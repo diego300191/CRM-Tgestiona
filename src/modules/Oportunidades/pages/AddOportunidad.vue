@@ -64,7 +64,7 @@ onMounted(() => {
         <button
           class="default-btn transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-12 pb-md-12 ps-md-30 pe-md-30 rounded-1 bg-success fs-md-15 fs-lg-16"
           type="button"
-          @click="addOportinidad()"
+          @click="addOportinidad(0,1)"
         >
           GUARDAR
           <i class="flaticon-plus position-relative ms-5 fs-12"></i>

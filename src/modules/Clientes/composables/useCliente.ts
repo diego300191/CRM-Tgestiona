@@ -159,8 +159,10 @@ export const useCliente = () => {
   const selectedFront = ref<number>(0);
   const IdMaestraSECTOR = ref<number>(4);
   const nombreMaestraSECTOR = ref<string>("SECTOR");
-  const selectSECTOR = ref<number>(0);
+  const selectSECTOR = ref<number>(-1);
   const showmodal = ref<boolean>(false);
+  const selectTipoCliente = ref<number>(-1);
+  
   type ClienteType = "actual" | "nuevo";
 
   // Variable reactiva con valor inicial
@@ -168,7 +170,7 @@ export const useCliente = () => {
   // Métodos
 
   // En tu composable useCliente.ts
-  const BuscarFiltros = async (sortField = "nombre", sortDirection = "asc") => {
+  const BuscarFiltros = async () => {
     isLoading.value = true;
     try {
       // Añade los parámetros de ordenamiento a tu llamada API
@@ -176,8 +178,8 @@ export const useCliente = () => {
         id: 0,
         nombre: nombreBusqueda.value || "",
         activo: true,
-        idSector: -1,
-        idTipoCliente: -1,
+        idSector: selectSECTOR.value == 0 ? -1 : selectSECTOR.value,
+        idTipoCliente: selectTipoCliente.value,
         pagina: {
           page: 0,
           pageSize: 10,
@@ -317,6 +319,7 @@ export const useCliente = () => {
     placeholder,
     selectedClientId,
     nombrecliente,
+    selectTipoCliente,
     // Métodos
     ListClientees,
     routerAddCliente,

@@ -66,6 +66,44 @@ export interface PaginationResponse {
 }
 
 
+export interface infoActividadesOportunidad{
+  id: number,
+  tipoGestion:string,
+  comentario: string,
+  idOportunidad: number,
+  IdEtapaOportunidad: number,
+  idUsuarioRegistro: number,
+  FechaActividad: null,
+  activo: boolean
+}
+
+
+export interface infoHistorialHorasOportunidad{
+  id: number,
+  Descripcion: string,
+  idOportunidad: number,
+  fecha: null,
+  hora: number,
+  idUsuarioRegistro: number,
+  IdUsuarioHoras: number,
+  activo: boolean
+}
+
+
+export interface responseActividadOportunidad {
+  id:number,
+idOportunidad: number,
+idEtapaOportunidad: number,
+tipoGestion: string,
+comentario: string,
+activo: true,
+idUsuarioRegistro: number,
+usuarioRegistro: string,
+fechaActividad: null,
+fechaRegistro:Date,
+}
+
+
 interface Pagina {
   page: number;
   pageSize: number;
