@@ -183,7 +183,7 @@ const handleSearch = (e: Event) => {
                   >
                     CARGOS
                     <i
-                      v-if="sortField === 'contacto'"
+                      v-if="sortField === 'cargo'"
                       :class="[
                         'ms-1',
                         sortDirection === 'asc'

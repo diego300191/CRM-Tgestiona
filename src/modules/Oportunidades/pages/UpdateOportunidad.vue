@@ -55,11 +55,9 @@ const {
   fechaHistorialHoras,
   listaHistorialHorasOportunidad,
   addHistorialHorasOportunidad,
+  NombreVigencia,
+  IdVigencia,
 } = useOportunidad();
-
-const UpdateOportunidades = (val: number) => {
-  console.log(val);
-};
 
 onMounted(async () => {
   await getIdOportunidad(
@@ -112,7 +110,8 @@ const avanzarEstado = () => {
   if (estadoSiguiente.value) {
     addOportinidad(
       parseInt(router.currentRoute.value.params.id.toString()),
-      estadoSiguiente.value.id
+      estadoSiguiente.value.id,
+      IdVigencia.value
     );
     // Actualizar el estado local si es necesario
     IdEstadoOportunidad.value = estadoSiguiente.value.id;
@@ -123,7 +122,8 @@ const retrocederEstado = () => {
   if (estadoAnterior.value) {
     addOportinidad(
       parseInt(router.currentRoute.value.params.id.toString()),
-      estadoAnterior.value.id
+      estadoAnterior.value.id,
+      IdVigencia.value
     );
     // Actualizar el estado local si es necesario
     IdEstadoOportunidad.value = estadoAnterior.value.id;
@@ -168,6 +168,42 @@ function calcularTiempo(Fecha: string | Date): string {
 
   return "0 Segundos";
 }
+
+// Computed para sumar horas
+const sumahoras = computed(() => {
+  // Verificación de seguridad
+  if (!listaHistorialHorasOportunidad.value || listaHistorialHorasOportunidad.value.length === 0) {
+    return '0.00';
+  }
+
+  let totalHoras = 0;
+  let totalMinutos = 0;
+
+  listaHistorialHorasOportunidad.value.forEach((item) => {
+    // Convertir el número a string y separar parte entera y decimal
+    const [horasStr, minutosStr] = item.hora.toString().split('.');
+    
+    const horas = Number(horasStr) || 0;
+    // Tomar solo los primeros dos dígitos de los minutos para casos como 1.5 (50 minutos)
+    const minutos = Number((minutosStr || '0').padEnd(2, '0').substring(0, 2)) || 0;
+
+    totalHoras += horas;
+    totalMinutos += minutos;
+  });
+
+  // Convertir minutos adicionales a horas
+  totalHoras += Math.floor(totalMinutos / 60);
+  totalMinutos = totalMinutos % 60;
+
+  // Formatear el resultado con dos dígitos en minutos
+  return `${totalHoras}.${totalMinutos.toString().padStart(2, '0')}`;
+});
+
+// Opcional: Computed para mostrar en formato legible
+const horasFormateadas = computed(() => {
+  const [horas, minutos] = sumahoras.value.split('.');
+  return `${horas}h ${minutos}m`;
+});
 </script>
 
 <template>
@@ -179,14 +215,14 @@ function calcularTiempo(Fecha: string | Date): string {
         class="d-flex justify-content-between align-items-center mb-15 mb-lg-20"
       >
         <h5 class="card-title fw-bold mb-0">
-          VIGENTE - {{ NombreEstadoOportunidad }}
+          {{NombreVigencia}} - {{ NombreEstadoOportunidad }}
         </h5>
         <div class="d-flex gap-2">
           <!-- gap-1, gap-2 o gap-3 para diferentes espacios -->
           <button
             class="default-btn transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-12 pb-md-12 ps-md-30 pe-md-30 rounded-1 bg-success fs-md-15 fs-lg-16"
             type="button"
-            @click="UpdateOportunidades(1)"
+            @click="addOportinidad(parseInt(router.currentRoute.value.params.id.toString()),IdEstadoOportunidad,IdVigencia)"
           >
             CONCLUIDO
           </button>
@@ -671,8 +707,17 @@ function calcularTiempo(Fecha: string | Date): string {
                     v-model="horas"
                   />
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-3">
                   <label class="form-label fw-medium">Descripción</label>
+                  <input
+                    type="text"
+                    class="form-control shadow-none"
+                    placeholder="Descripción de la actividad"
+                    v-model="descripcionHistorialHoras"
+                  />
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-medium">Usuario</label>
                   <input
                     type="text"
                     class="form-control shadow-none"
@@ -708,10 +753,10 @@ function calcularTiempo(Fecha: string | Date): string {
                   </thead>
                   <tbody>
                     <tr v-for="historialhoras in listaHistorialHorasOportunidad" :key="historialhoras.id"> 
-                      <td>{{historialhoras.fecha}}</td>
+                      <td>{{formatDateToDDMMYYYY(historialhoras.fecha)}}</td>
                       <td>{{historialhoras.hora}}</td>
                       <td>{{historialhoras.descripcion}}</td>
-                      <td>{{historialhoras.idUsuarioHoras}}</td>
+                      <td>admin</td>
                       <td>
                         <button class="btn btn-sm btn-outline-primary me-2">
                           Editar
@@ -728,7 +773,7 @@ function calcularTiempo(Fecha: string | Date): string {
 
               <!-- Resumen total -->
               <div class="mt-4 text-end">
-                <h5>Total de horas registradas: <strong>6.50</strong></h5>
+                <h5>Total de horas registradas: <strong>{{horasFormateadas}}</strong></h5>
               </div>
             </div>
           </div>

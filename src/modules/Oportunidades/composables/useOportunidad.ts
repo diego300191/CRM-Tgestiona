@@ -70,10 +70,14 @@ const getOportunidad = async (page: number) => {
   try {
     const size = 10;
     const filters: InfoFiltro = {
-      IdEtapaOportunidad: -1,
-      IdCliente: -1,
-      IdSubTipoSolucionFm: -1,
-      Activo: true,
+      idEtapaOportunidad: -1,
+      idCliente: -1,
+      idTipoCliente: -1,
+      idSector: -1,
+      idUsuarioBack: -1,
+      idUsuarioFront: -1,
+      idSubTipoSolucionFm: -1,
+      activo: true,
       pagina: {
         page: page,
         pageSize: size,
@@ -114,6 +118,7 @@ export const useOportunidad = () => {
   const IdMaestraMEDIO = ref<number>(3);
   const IdMaestraUNIDAD = ref<number>(9);
   const IdMaestraBACK = ref<number>(1);
+  const IdMaestraSubestado = ref<number>(1);
   const IdMaestraPERSONAENCARGADA = ref<number>(1);
   const IdMaestraSOLUCIONFM = ref<number>(6);
   const IdMaestraSUBTIPOSOLUCIONFM = ref<number>(7);
@@ -126,6 +131,7 @@ export const useOportunidad = () => {
   const nombreMaestraPERSONAENCARGADA = ref<string>("PERSONA ENCARGADA");
   const nombreMaestraSOLUCIONFM = ref<string>("SOLUCIÓN FM");
   const nombreMaestraSUBTIPOSOLUCIONFM = ref<string>("SUBTIPO SOLUCIÓN FM");
+  const nombreMaestraSUBESTADO = ref<string>("SUB ESTADOS");
 
   const selectFUENTEORIGEN = ref<number>(0);
   const selectPROSPECCION = ref<number>(0);
@@ -150,13 +156,29 @@ export const useOportunidad = () => {
   const fechaHistorialHoras = ref<null>(null);
   const IdUsuarioRegistroHistorial = ref<number>(1);
 
+  const selectIdEtapaOportunidad = ref<number>(-1);
+  const selectIdCliente = ref<number>(-1);
+  const selectIdTipoCliente = ref<number>(-1);
+  const selectIdSector = ref<number>(-1);
+  const selectIdBack = ref<number>(-1);
+  const selectIdFront = ref<number>(-1);
+  const selectIdTipoSolucionFM = ref<number>(-1);
+  const IdMaestraSECTOR = ref<number>(4);
+  const nombreMaestraSECTOR = ref<string>("SECTOR");
+  const IdVigencia = ref<number>(1);
+  const NombreVigencia = ref<string>("");
+
   // Métodos
   const BuscarFiltros = (): void => {
     const filters: InfoFiltro = {
-      IdEtapaOportunidad: -1,
-      IdCliente: -1,
-      IdSubTipoSolucionFm: -1,
-      Activo: true,
+      idEtapaOportunidad: selectIdEtapaOportunidad.value == 0 ? -1 : selectIdEtapaOportunidad.value,
+      idCliente: selectIdCliente.value,
+      idTipoCliente: selectIdTipoCliente.value,
+      idSector: selectIdSector.value == 0 ? -1 : selectIdSector.value,
+      idUsuarioBack: selectIdBack.value,
+      idUsuarioFront: selectIdFront.value,
+      idSubTipoSolucionFm: selectIdTipoSolucionFM.value,
+      activo: true,
       pagina: {
         page: 0,
         pageSize: 10,
@@ -168,7 +190,8 @@ export const useOportunidad = () => {
 
   const addOportinidad = async (
     valorId: number,
-    IdEstadoOportunidaval: number
+    IdEstadoOportunidaval: number,
+    IdVigencia: number,
   ): Promise<void> => {
     const infoOportunidad: InfoobjOportunidad = {
       id: valorId,
@@ -190,6 +213,7 @@ export const useOportunidad = () => {
       servicio: servicio.value,
       activo: true,
       idUsuarioRegistro: 12,
+      idVigencia : IdVigencia,
     };
 
     const res: ApiResponse = await store.saveOportunidad(infoOportunidad);
@@ -235,16 +259,15 @@ export const useOportunidad = () => {
   const addHistorialHorasOportunidad = async (ValId: number): Promise<void> => {
     const objHistorialHorasOportunidad: infoHistorialHorasOportunidad = {
       id: 0,
-      Descripcion: descripcionHistorialHoras.value,
+      descripcion: descripcionHistorialHoras.value,
       idOportunidad: ValId,
       fecha: fechaHistorialHoras.value,
       hora: horas.value,
-      idUsuarioRegistro: 1,
+      usuarioRegistro: 1,
       IdUsuarioHoras: IdUsuarioRegistroHistorial.value,
       activo: true,
     };
 
-    console.log(objHistorialHorasOportunidad);
     const res: ApiResponse = await store.saveHistorialHorasOportunidadStore(
       objHistorialHorasOportunidad
     );
@@ -287,6 +310,8 @@ export const useOportunidad = () => {
       nombrecliente.value = res.body.cliente;
       selectedClientId.value = res.body.idcliente;
       configuracionEtapaVal.value = res.body.configuracionEtapa;
+      IdVigencia.value = res.body.idVigencia;
+      NombreVigencia.value = res.body.vigencia;
     } else {
       console.log("Error al guardar", res.mensaje);
     }
@@ -410,6 +435,19 @@ export const useOportunidad = () => {
     fechaHistorialHoras,
     IdUsuarioRegistroHistorial,
     listaHistorialHorasOportunidad,
+    selectIdEtapaOportunidad,
+    selectIdCliente,
+    selectIdTipoCliente,
+    selectIdSector,
+    selectIdBack,
+    selectIdFront,
+    selectIdTipoSolucionFM,
+    IdMaestraSECTOR,
+    nombreMaestraSECTOR,
+    IdMaestraSubestado,
+    nombreMaestraSUBESTADO,
+    IdVigencia,
+    NombreVigencia,
     // Métodos
     ListOportunidades,
     routerAddOportunidad,

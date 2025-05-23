@@ -18,6 +18,7 @@ export interface InfoobjOportunidad {
   servicio: string;
   activo: boolean;
   idUsuarioRegistro: number;
+  idVigencia : number;
 }
 
 
@@ -54,7 +55,7 @@ export interface InfoOportunidadPaginado {
 
 export interface PaginationData {
   body: InfoOportunidadPaginado[];
-  totalPages: number;
+  Page: number;
   totalRecord: number;
 }
 
@@ -80,11 +81,11 @@ export interface infoActividadesOportunidad{
 
 export interface infoHistorialHorasOportunidad{
   id: number,
-  Descripcion: string,
+  descripcion: string,
   idOportunidad: number,
   fecha: null,
   hora: number,
-  idUsuarioRegistro: number,
+  usuarioRegistro: number,
   IdUsuarioHoras: number,
   activo: boolean
 }
@@ -110,10 +111,14 @@ interface Pagina {
 }
 
 export interface InfoFiltro {
-  IdEtapaOportunidad?: number;
-  IdCliente?: number;
-  IdSubTipoSolucionFm?: number;
-  Activo?: boolean;
+  idEtapaOportunidad?: number;
+  idCliente?: number;
+  idTipoCliente?:number;
+  idSector?:number;
+  idUsuarioBack?:number;
+  idUsuarioFront?:number;
+  idSubTipoSolucionFm?: number;
+  activo?: boolean;
   pagina?: Pagina;
 }
 

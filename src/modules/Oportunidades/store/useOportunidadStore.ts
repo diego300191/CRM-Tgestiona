@@ -154,7 +154,7 @@ export const useOportunidaStore = defineStore("useOportunidad", () => {
       );
 
       oportunidadlist.value = data.body;
-      totalPages.value = 10;
+      totalPages.value = data.Page + 1;
       totalRegister.value = data.totalRecord;
     } catch (error) {
       console.error("Error en búsqueda paginada:", error);
