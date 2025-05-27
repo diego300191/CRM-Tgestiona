@@ -50,6 +50,8 @@ export interface InfoOportunidadPaginado {
   fechaRegistro: Date; 
   usuarioBack: string;
   usuarioFront: string;
+  idVigencia: number,
+  vigencia: string
 }
 
 

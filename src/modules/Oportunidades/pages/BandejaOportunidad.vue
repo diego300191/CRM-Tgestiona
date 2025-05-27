@@ -143,19 +143,19 @@ const handleSearch = (e: Event) => {
                 </ComboDinamico>
               </div>
             </div>
-            <div class="row search-box align-items-start w-100 mt-4 mb-2">
-              <div class="col-2 form-group justify-content-start">
+            <div class="row">
+              <div class="col-2">
                  <button
-                    class="default-btn border-0 text-white pt-11 pb-11 ps-25 pe-25 pt-md-12 pb-md-12 ps-md-30 pe-md-30 rounded-1 bg-primary fs-md-15 "
+                    class="btn border-0 text-white pt-11 pb-11 ps-15 pe-15 pt-md-12 pb-md-12 mb-0 rounded-1 bg-primary fs-md-15 "
                     type="button" @click="BuscarFiltros()">
                     Buscar
                     <i class="flaticon-search-interface-symbol"></i>
                   </button>
               </div>
-              <div class="col-4 form-group ">
+              <div class="col-2">
                 <div>
                   <button
-                    class="btn border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-12 pb-md-12 ps-md-30 pe-md-30 rounded-1 bg-success "
+                    class="btn border-0 fw-medium text-white pt-11 pb-11 ps-15 pe-15 pt-md-12 pb-md-12 rounded-1 bg-success fs-md-15 "
                     type="button" @click="routerAddOportunidad()">
                     Nuevo Oportunidad
                     <i class="flaticon-plus ms-5 fs-12"></i>
@@ -221,7 +221,7 @@ const handleSearch = (e: Event) => {
                     </div>
                   </th>
                   <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                    Vigente
+                    {{oportunidad.vigencia}}
                   </td>
                   <td class="shadow-none lh-1 fw-medium text-black-emphasis">
                     {{ oportunidad.etapaOportunidad }}
@@ -268,6 +268,10 @@ const handleSearch = (e: Event) => {
 
 .search-box {
   gap: 1rem;
+}
+.search-box .d-flex {
+  width: 100%;
+  flex-wrap: nowrap;
 }
 
 .form-group {

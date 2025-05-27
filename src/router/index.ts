@@ -1,4 +1,5 @@
 import { createWebHistory, createRouter, RouteRecordRaw } from "vue-router";
+import { useAuthStore } from "@/modules/Auth/store/useAuthStore";
 
 import FileManagerPage from "../pages/FileManagerPage.vue";
 import ChangelogPage from "../pages/ChangelogPage.vue";
@@ -65,7 +66,8 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const isAuthenticated = /* lógica de autenticación */ true;
+  const store = useAuthStore();
+  const isAuthenticated = store.isAuthenticated;
   
   if (to.meta.requiresAuth && !isAuthenticated) {
     next('/login');

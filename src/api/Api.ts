@@ -1,14 +1,13 @@
 import axios, { AxiosInstance, AxiosRequestConfig, AxiosResponse, AxiosError, InternalAxiosRequestConfig, AxiosHeaders } from "axios";
 import router from "@/router";
 
+
+
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   source?: string;
 }
-
 const Api: AxiosInstance = axios.create({
-  //baseURL: "http://181.224.251.62:8092/", // Svr Producción
-  //baseURL: "http://181.224.251.56:8094/", // Svr Desarrollo
-  baseURL: "https://localhost:7122/", // Mi maquina
+  baseURL: process.env.VUE_APP_API_URL || "https://localhost:7122/", // Fallback a local si no se define
   headers: {
     "Content-Type": "application/json; charset=utf-8",
   },

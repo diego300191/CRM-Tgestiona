@@ -215,7 +215,7 @@ export const useOportunidad = () => {
       idUsuarioRegistro: 12,
       idVigencia : IdVigencia,
     };
-
+    
     const res: ApiResponse = await store.saveOportunidad(infoOportunidad);
     if (res.code === 200) {
       if (valorId == 0) {

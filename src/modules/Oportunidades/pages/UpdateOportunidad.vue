@@ -222,7 +222,8 @@ const horasFormateadas = computed(() => {
           <button
             class="default-btn transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-12 pb-md-12 ps-md-30 pe-md-30 rounded-1 bg-success fs-md-15 fs-lg-16"
             type="button"
-            @click="addOportinidad(parseInt(router.currentRoute.value.params.id.toString()),IdEstadoOportunidad,IdVigencia)"
+            @click="addOportinidad(parseInt(router.currentRoute.value.params.id.toString()),IdEstadoOportunidad,2)"
+            v-if="NombreVigencia != 'Concluido'"
           >
             CONCLUIDO
           </button>
@@ -237,7 +238,7 @@ const horasFormateadas = computed(() => {
       </div>
 
       <!-- Botones de estado -->
-      <div class="mb-3 d-flex flex-wrap gap-2">
+      <div class="mb-3 d-flex flex-wrap gap-2" v-if="NombreVigencia != 'Concluido'">
         <!-- Botón de siguiente estado (solo si no es el último estado) -->
         <div v-if="estadoSiguiente">
           <button
@@ -327,7 +328,7 @@ const horasFormateadas = computed(() => {
                 >
                   <div class="accordion-body">
                     <form class="row g-3 needs-validation" novalidate>
-                      <div class="row mt-3">
+                      <!-- <div class="row mt-3">
                         <div class="col-12 text-end">
                           <button
                             class="default-btn transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-12 pb-md-12 ps-md-30 pe-md-30 rounded-1 bg-success fs-md-15 fs-lg-16"
@@ -336,7 +337,7 @@ const horasFormateadas = computed(() => {
                             EDITAR
                           </button>
                         </div>
-                      </div>
+                      </div> -->
                       <div class="row g-3 mb-3">
                         <div class="col-md-4">
                           <label
@@ -586,7 +587,7 @@ const horasFormateadas = computed(() => {
                             v-model="fechaActividad"
                           />
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-4" v-if="NombreVigencia != 'Concluido'">
                           <button
                             class="default-btn transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-12 pb-md-12 ps-md-30 pe-md-30 rounded-1 bg-success fs-md-15 fs-lg-16"
                             type="button"

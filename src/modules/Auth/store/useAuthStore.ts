@@ -1,101 +1,192 @@
 import { defineStore } from "pinia";
-import { ref } from "vue";
+import router from "../../../router";
 import api from "@/api/Api";
-import type { AxiosResponse } from "axios";
+import Swal from "sweetalert2";
+import axios from "axios";
 
-// Define interfaces para los tipos de datos
-interface Almacen {
-  id?: number;
-  // Agrega aquí todas las propiedades de un almacén
-  [key: string]: any;
+// Tipos para el estado
+interface AuthState {
+  firstname: string;
+  rol: string;
+  token: string;
+  listOption: any[];
+  isAuthenticated: boolean | string;
+  refreshTokenTimeout: number;
+  nombre: string;
+  apellidopaterno: string;
+  apellidomaterno: string;
+  email: string;
+  numeroDocumento: string;
+  telefono: string;
+  celular: string;
+  direccion: string;
+  foto: string;
+  logo: string;
+  listaAcciones: any[];
+  usuario: string;
+  idUsuario: string;
 }
 
-interface PaginationData {
-  data: Almacen[];
-  totalPages: number;
-  totalRecords: number;
+interface LoginResponse {
+  nombreCompleto: string;
+  role: string;
+  token: string;
+  id: string;
+  listOpciones: any[];
+  acciones?: string;
 }
 
-interface InfoFiltroBusqueda {
-  // Define la estructura de tus filtros de búsqueda
-  [key: string]: any;
-}
-
-interface ValFormEmpresa {
-  // Define la estructura del formulario de empresa
-  [key: string]: any;
-}
-
-export const useClienteStore = defineStore(
-  "useCliente",
-  () => {
-    // Estado tipado
-    const currentPages = ref<number>(1);
-    const totalPages = ref<number>(0);
-    const almaceneslist = ref<Almacen[]>([]);
-    const totalRegister = ref<number>(0);
-
-    // Acciones
-    const setAlmacenes = (newAlmacenes: Almacen[]): void => {
-      almaceneslist.value = newAlmacenes;
-    };
-
-    const setPage = (page: number): void => {
-      if (currentPages.value === page) return;
-      if (page <= 0) return;
-      currentPages.value = page;
-    };
-
-    const saveAlmacen = async (valFormEmpresa: ValFormEmpresa, Tipo: number): Promise<any> => {
+export const useAuthStore = defineStore("Auth", {
+  state: (): AuthState => ({
+    firstname: "",
+    rol: "",
+    token: "",
+    listOption: [],
+    isAuthenticated: false,
+    refreshTokenTimeout: 0,
+    nombre: "",
+    apellidopaterno: "",
+    apellidomaterno: "",
+    email: "",
+    numeroDocumento: "",
+    telefono: "",
+    celular: "",
+    direccion: "",
+    foto: "",
+    logo: "",
+    listaAcciones: [],
+    usuario: "",
+    idUsuario: "",
+  }),
+  persist: true,
+  actions: {
+    async login(login: string, password: string, codigoAcceso: string) {
       try {
-        const endpoint = Tipo === 1 ? "/api/admin/Almacen" : "/api/admin/Almacen";
-        const method = Tipo === 1 ? api.post : api.put;
-        const { data }: AxiosResponse = await method(endpoint, { ...valFormEmpresa });
-        return data;
-      } catch (error) {
-        console.error("Error al guardar almacén:", error);
-        throw error;
-      }
-    };
-
-    const BusquedaPaginado = async (infoFiltroBusqueda: InfoFiltroBusqueda): Promise<void> => {
-      try {
-        almaceneslist.value = [];
-        const { data }: AxiosResponse<PaginationData> = await api.post("/api/admin/Almacen/Paginado", {
-          ...infoFiltroBusqueda,
+        // const response = await axios.post<LoginResponse>(
+        //   process.env.VUE_APP_ENV === "development"
+        //     ? process.env.VUE_APP_apiURLSeguridad_DESA
+        //     : process.env.VUE_APP_apiURLSeguridad_PROD,
+        //   {
+        //     login,
+        //     password,
+        //     codigoAcceso,
+        //   }
+        // );
+        if (login === "diego.barrientos") {
+          //const { data } = response;
+          // this.setData(data);
+          // this.setMenuOpciones(data.listOpciones);
+          this.isAuthenticated = true;
+          router.push({ path: "/" });
+        } else {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "Usuario y/o clave ingresados son incorrectos o no tiene permiso para ingresar al sistema.",
+            footer:
+              "<b>Favor de contactar con el Administrador del sistema.</b>",
+          });
+        }
+      } catch (e) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Usuario y/o clave ingresados son incorrectos o no tiene permiso para ingresar al sistema.",
+          footer: "<b>Favor de contactar con el Administrador del sistema.</b>",
         });
-        almaceneslist.value = data.data;
-        totalPages.value = data.totalPages;
-        totalRegister.value = data.totalRecords;
-      } catch (error) {
-        console.error("Error en búsqueda paginada:", error);
-        throw error;
+        console.error(e);
       }
-    };
+    },
 
-    const getAlmacen = async (id: number): Promise<Almacen> => {
-      try {
-        const { data }: AxiosResponse<Almacen> = await api.get(`/api/admin/Almacen/${id}`);
-        return data;
-      } catch (error) {
-        console.error(`Error al obtener almacén con ID ${id}:`, error);
-        throw error;
+    logout() {
+      const data = {
+        nombreCompleto: null,
+        role: null,
+        token: null,
+        isAuthenticated: false,
+        idUsuario: null,
+      };
+      this.firstname = data.nombreCompleto || "";
+      this.rol = data.role || "";
+      this.token = data.token || "";
+      this.isAuthenticated = false;
+      this.idUsuario = data.idUsuario || "";
+      localStorage.clear();
+      router.push({ name: "Home" });
+    },
+
+    setData(data: LoginResponse) {
+      this.firstname = data.nombreCompleto;
+      this.rol = data.role;
+      this.token = data.token;
+      this.isAuthenticated = true;
+      this.idUsuario = data.id;
+
+      localStorage.setItem("token", this.token);
+      localStorage.setItem("role", this.rol);
+      localStorage.setItem("NombreCompleto", this.firstname);
+      localStorage.setItem("isAuthenticated", this.isAuthenticated.toString());
+      localStorage.setItem("loginComponent", "login");
+      localStorage.setItem("UsuarioId", this.idUsuario);
+    },
+
+    setMenuOpciones(menu: any[]) {
+      this.listOption = [];
+      this.listOption.push(...menu);
+      localStorage.setItem("MenuOpciones", JSON.stringify(menu));
+    },
+
+    setListaAcciones(lista: string) {
+      this.listaAcciones = [];
+      const listaParseJson = JSON.parse(lista);
+      this.listaAcciones.push(listaParseJson);
+    },
+
+    startRefreshTokenTimer() {
+      const jwtBase64 = this.token.split(".")[1];
+      const jwtToken = JSON.parse(atob(jwtBase64));
+      const expires = new Date(jwtToken.exp * 1000);
+      const timeout = expires.getTime() - Date.now() - 60 * 1000;
+      this.refreshTokenTimeout = setTimeout(this.refreshToken, timeout) || 0;
+    },
+
+    stopRefreshTokenTimer() {
+      if (this.refreshTokenTimeout) {
+        clearTimeout(this.refreshTokenTimeout);
       }
-    };
+    },
 
-    return {
-      // State
-      currentPages,
-      totalPages,
-      almaceneslist,
-      totalRegister,
+    getLocalStorageItem() {
+      this.firstname = localStorage.getItem("NombreCompleto") || "";
+      this.rol = localStorage.getItem("role") || "";
+      this.token = localStorage.getItem("token") || "";
+      this.isAuthenticated = localStorage.getItem("isAuthenticated") || false;
+      this.listOption = JSON.parse(
+        localStorage.getItem("MenuOpciones") || "[]"
+      );
+      this.apellidopaterno = localStorage.getItem("apellidoPaterno") || "";
+      this.idUsuario = localStorage.getItem("UsuarioId") || "";
+    },
 
-      // Actions
-      setAlmacenes,
-      setPage,
-      saveAlmacen,
-      BusquedaPaginado,
-      getAlmacen,
-    };
-  }
-);
+    async getvalidarUserReminder(username: string) {
+      const { data } = await api.get(`/NotificarOlvideContrasenia/${username}`);
+      return data;
+    },
+
+    async getvalidarCodigoAccesReminder(username: string, codigo: string) {
+      const { data } = await api.get(
+        `/ValidarCodigoVerficacion/${username}/${codigo}`
+      );
+      return data;
+    },
+
+    async changePasswordUser(formUser: any) {
+      const { data } = await api.post("/cambiarContrasenia", { ...formUser });
+      return data;
+    },
+
+    async refreshToken() {
+      // Implementar lógica para refrescar el token si es necesario
+    },
+  },
+});
