@@ -14,7 +14,7 @@ import {
   infoHistorialHorasOportunidad,
 } from "../interfaces/index";
 import Swal from "sweetalert2";
-//import { useAuthStore } from "@/modules/Auth/store/useAuthStore";
+import { useAuthStore } from "@/modules/Auth/store/useAuthStore";
 //import Swal from "sweetalert2";
 import api from "@/api/Api";
 import type { AxiosResponse } from "axios";
@@ -59,6 +59,7 @@ interface FrontOption {
 
 // Stores
 const store = useOportunidaStore();
+const storeAuth = useAuthStore();
 const storeCliente = useClienteStore();
 
 const nombreComboDinamico = ref<string>("Tipo Sucursal");
@@ -212,7 +213,7 @@ export const useOportunidad = () => {
       detalle: detalle.value,
       servicio: servicio.value,
       activo: true,
-      idUsuarioRegistro: 12,
+      idUsuarioRegistro: storeAuth.idUsuario,
       idVigencia : IdVigencia,
     };
     
@@ -263,7 +264,7 @@ export const useOportunidad = () => {
       idOportunidad: ValId,
       fecha: fechaHistorialHoras.value,
       hora: horas.value,
-      usuarioRegistro: 1,
+      usuarioRegistro: storeAuth.idUsuario,
       IdUsuarioHoras: IdUsuarioRegistroHistorial.value,
       activo: true,
     };

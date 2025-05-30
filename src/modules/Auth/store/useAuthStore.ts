@@ -24,16 +24,20 @@ interface AuthState {
   logo: string;
   listaAcciones: any[];
   usuario: string;
-  idUsuario: string;
+  idUsuario: number;
 }
 
 interface LoginResponse {
+  dominioweb: string;
+  esInterno: boolean;
+  expiresIn: number;
+  nombre: string;
   nombreCompleto: string;
   role: string;
   token: string;
-  id: string;
+  tokenApp: string;
+  id: number;
   listOpciones: any[];
-  acciones?: string;
 }
 
 export const useAuthStore = defineStore("Auth", {
@@ -56,37 +60,25 @@ export const useAuthStore = defineStore("Auth", {
     logo: "",
     listaAcciones: [],
     usuario: "",
-    idUsuario: "",
+    idUsuario: 0,
   }),
   persist: true,
   actions: {
     async login(login: string, password: string, codigoAcceso: string) {
       try {
-        // const response = await axios.post<LoginResponse>(
-        //   process.env.VUE_APP_ENV === "development"
-        //     ? process.env.VUE_APP_apiURLSeguridad_DESA
-        //     : process.env.VUE_APP_apiURLSeguridad_PROD,
-        //   {
-        //     login,
-        //     password,
-        //     codigoAcceso,
-        //   }
-        // );
-        if (login === "diego.barrientos") {
-          //const { data } = response;
-          // this.setData(data);
-          // this.setMenuOpciones(data.listOpciones);
-          this.isAuthenticated = true;
-          router.push({ path: "/" });
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Usuario y/o clave ingresados son incorrectos o no tiene permiso para ingresar al sistema.",
-            footer:
-              "<b>Favor de contactar con el Administrador del sistema.</b>",
-          });
-        }
+        const response = await axios.post<LoginResponse>(
+           process.env.VUE_APP_ENV === "development"
+            ? process.env.VUE_APP_apiURLSeguridad_DESA
+            : process.env.VUE_APP_apiURLSeguridad_PROD,
+          {
+          login,
+          password,
+          codigoAcceso,
+        });
+        const { data } = response;
+        this.setData(data);
+        this.setMenuOpciones(data.listOpciones);
+        router.push({ path: "/" });
       } catch (e) {
         Swal.fire({
           icon: "error",
@@ -110,7 +102,7 @@ export const useAuthStore = defineStore("Auth", {
       this.rol = data.role || "";
       this.token = data.token || "";
       this.isAuthenticated = false;
-      this.idUsuario = data.idUsuario || "";
+      this.idUsuario = data.idUsuario || 0;
       localStorage.clear();
       router.push({ name: "Home" });
     },
@@ -127,7 +119,7 @@ export const useAuthStore = defineStore("Auth", {
       localStorage.setItem("NombreCompleto", this.firstname);
       localStorage.setItem("isAuthenticated", this.isAuthenticated.toString());
       localStorage.setItem("loginComponent", "login");
-      localStorage.setItem("UsuarioId", this.idUsuario);
+      localStorage.setItem("UsuarioId", this.idUsuario.toString());
     },
 
     setMenuOpciones(menu: any[]) {
@@ -165,7 +157,7 @@ export const useAuthStore = defineStore("Auth", {
         localStorage.getItem("MenuOpciones") || "[]"
       );
       this.apellidopaterno = localStorage.getItem("apellidoPaterno") || "";
-      this.idUsuario = localStorage.getItem("UsuarioId") || "";
+      this.idUsuario = Number(localStorage.getItem("UsuarioId")) || 0;
     },
 
     async getvalidarUserReminder(username: string) {

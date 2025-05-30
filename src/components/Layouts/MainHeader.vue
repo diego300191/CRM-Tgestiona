@@ -1,3 +1,32 @@
+
+<script lang="ts">
+import { defineComponent, ref, onMounted } from "vue";
+import stateStore from "../../utils/store";
+import { useAuthStore } from "@/modules/Auth/store/useAuthStore";
+
+export default defineComponent({
+  name: "MainHeader",
+  setup() {
+    const stateStoreInstance = stateStore;
+    const isSticky = ref(false);
+    const storeuseAuth = useAuthStore();
+    
+    onMounted(() => {
+      window.addEventListener("scroll", () => {
+        let scrollPos = window.scrollY;
+        isSticky.value = scrollPos >= 100;
+      });
+    });
+
+    return {
+      isSticky,
+      stateStoreInstance,
+      storeuseAuth,
+    };
+  },
+});
+</script>
+
 <template>
   <header
     :class="[
@@ -40,8 +69,8 @@
                 alt="admin"
               />
               <span class="title d-none d-lg-block ms-10 ms-lg-15">
-                <span class="d-block fw-bold mb-5 mb-md-8" style="color: white;">Victor James</span>
-                <span class="text-body-emphasis fw-semibold fs-13" style="color: white;">Admin</span>
+                <span class="d-block fw-bold mb-5 mb-md-8" style="color: white;">{{storeuseAuth.firstname}}</span>
+                <span class="text-body-emphasis fw-semibold fs-13" style="color: white;">{{storeuseAuth.rol}}</span>
               </span>
             </button>
             <ul
@@ -60,28 +89,3 @@
     </div>
   </header>
 </template>
-
-<script lang="ts">
-import { defineComponent, ref, onMounted } from "vue";
-import stateStore from "../../utils/store";
-
-export default defineComponent({
-  name: "MainHeader",
-  setup() {
-    const stateStoreInstance = stateStore;
-    const isSticky = ref(false);
-
-    onMounted(() => {
-      window.addEventListener("scroll", () => {
-        let scrollPos = window.scrollY;
-        isSticky.value = scrollPos >= 100;
-      });
-    });
-
-    return {
-      isSticky,
-      stateStoreInstance,
-    };
-  },
-});
-</script>

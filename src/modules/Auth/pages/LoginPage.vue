@@ -8,7 +8,7 @@ const contrasena = ref<string>("");
 
 
 const ingresar = (user : string, password : string) => {
-  store.login(user, password, "jEQWOcnY=6565JFSDUEWBNLJFSDUE");
+  store.login(user, password, "g0TT1FjEQWOcnY=Su0PJvaMSIcr3");
 };
 
 

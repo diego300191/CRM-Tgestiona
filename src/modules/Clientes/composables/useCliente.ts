@@ -4,10 +4,11 @@ import router from "@/router";
 import { storeToRefs } from "pinia";
 import { useClienteStore } from "@/modules/Clientes/store/useClienteStore";
 import { InfoCliente, InfoFiltro } from "../interfaces/index";
-//import { useAuthStore } from "@/modules/Auth/store/useAuthStore";
+import { useAuthStore } from "@/modules/Auth/store/useAuthStore";
 import Swal from "sweetalert2";
 import api from "@/api/Api";
 import type { AxiosResponse } from "axios";
+
 
 // Interfaces para tipos de datos
 interface Empresa {
@@ -68,7 +69,7 @@ interface FrontOption {
 
 // Stores
 const store = useClienteStore();
-//const storeAuth = useAuthStore();
+const storeAuth = useAuthStore();
 //const listaEmpresas: Ref<Empresa[]> = ref(storeAuth.listaEmpresas);
 const nombreComboDinamico = ref<string>("Tipo Sucursal");
 const nombreBusqueda = ref<string | null>("");
@@ -208,7 +209,7 @@ export const useCliente = () => {
       Cargo: cargos.value,
       IdUserFront: selectedFront.value,
       Activo: true,
-      IdUsuarioRegistro: 12,
+      IdUsuarioRegistro: storeAuth.idUsuario,
     };
 
     const res: ApiResponse = await store.saveCliente(infoCliente);
