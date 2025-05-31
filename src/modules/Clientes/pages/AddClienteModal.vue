@@ -22,6 +22,7 @@ const {
   placeholder,
   addCliente,
   getCliente,
+  getCombosFront,
 } = useCliente();
 
 const loadDataIfUpdate = () => {
@@ -35,7 +36,10 @@ const loadDataIfUpdate = () => {
 };
 
 // Run on mount and watch for show changes
-onMounted(loadDataIfUpdate);
+onMounted(() => {
+  loadDataIfUpdate;
+  getCombosFront(1093);
+});
 watch(() => stateStoreInstance.show, loadDataIfUpdate);
 </script>
 
@@ -138,13 +142,13 @@ watch(() => stateStoreInstance.show, loadDataIfUpdate);
                   v-model="selectedFront"
                   required
                 >
-                  <option selected disabled value="">Seleccionar...</option>
+                  <option selected disabled value=0>Seleccionar...</option>
                   <option
                     v-for="option in frontOptions"
-                    :key="option.value"
-                    :value="option.value"
+                    :key="option.id"
+                    :value="option.id"
                   >
-                    {{ option.label }}
+                    {{ option.usuario }}
                   </option>
                 </select>
                 <div class="invalid-feedback">

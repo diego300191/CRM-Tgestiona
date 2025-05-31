@@ -50,6 +50,18 @@ export const useClienteStore = defineStore("useCliente", () => {
     }
   };
 
+    const getComboFrontBackStore = async (IdUsuario: number): Promise<any> => {
+    try {
+      const { data }: AxiosResponse = await api.get(
+        `/Common/ObtenerTipoUsuario/${IdUsuario}`
+      );
+      return data;
+    } catch (error) {
+      console.error("Error al obtener el Data:", error);
+      throw error;
+    }
+  };
+
   const BusquedaPaginado = async (
     infoFiltroBusqueda: InfoFiltro
   ): Promise<void> => {
@@ -85,5 +97,6 @@ export const useClienteStore = defineStore("useCliente", () => {
     saveCliente,
     BusquedaPaginado,
     getClienteStore,
+    getComboFrontBackStore,
   };
 });

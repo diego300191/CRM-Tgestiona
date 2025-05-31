@@ -77,9 +77,9 @@ export default defineComponent({
               class="dropdown-menu dropdown-menu-end"
               aria-labelledby="dropdownMenuButton1"
             >
-              <li>
+              <li @click="storeuseAuth.logout()">
                 <router-link class="dropdown-item text-body-secondary fw-semibold" to="/login">
-                  <i class="flaticon-logout me-2"></i>Logout
+                  <i class="flaticon-logout me-2" ></i>Salir
                 </router-link>
               </li>
             </ul>

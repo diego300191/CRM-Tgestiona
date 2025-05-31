@@ -11,7 +11,7 @@ export interface InfoobjOportunidad {
   idSubTipoSolucionFM: number;
   idUsuarioBack: number;
   idUsuarioFront: number;
-  idUsuarioEntrega: number;
+  UsuarioCosteador: string;
   importe: number;
   marge: number;
   detalle: string;
@@ -19,6 +19,7 @@ export interface InfoobjOportunidad {
   activo: boolean;
   idUsuarioRegistro: number;
   idVigencia : number;
+
 }
 
 
@@ -40,7 +41,7 @@ export interface InfoOportunidadPaginado {
   idSubTipoSolucionFm: number;
   idUsuarioBack: number;
   idUsuarioFrom: number;
-  idusuarioentrega: number;
+  usuarioCosteador: string;
   importe: number;
   marge: number;
   detalle: string;
@@ -85,10 +86,10 @@ export interface infoHistorialHorasOportunidad{
   id: number,
   descripcion: string,
   idOportunidad: number,
-  fecha: null,
+  fecha: string|null,
   hora: number,
   usuarioRegistro: number,
-  IdUsuarioHoras: number,
+  usuarioHoras: string,
   activo: boolean
 }
 

@@ -53,8 +53,8 @@ const swalSuccess = (message: string): void => {
 };
 
 interface FrontOption {
-  value: number;
-  label: string;
+  id: number;
+  usuario: string;
 }
 
 // Stores
@@ -105,7 +105,8 @@ export const useOportunidad = () => {
   // State
 
   const { selectedClientId, nombrecliente } = storeToRefs(storeCliente);
-  const { opcionesSubTipo, IdEstadoOportunidad } = storeToRefs(store);
+  const { opcionesSubTipo, IdEstadoOportunidad, IdHistorialHoras } =
+    storeToRefs(store);
 
   const disabled = ref<boolean>(true);
   const importe = ref<number>(0);
@@ -150,12 +151,13 @@ export const useOportunidad = () => {
   const tipoActividad = ref<string>("");
   const fechaActividad = ref<null>(null);
   const listaActividadesOportunidad = ref<responseActividadOportunidad>();
-  const listaHistorialHorasOportunidad = ref<infoHistorialHorasOportunidad>();
+  const listaHistorialHorasOportunidad = ref<infoHistorialHorasOportunidad[]>(
+    []
+  );
 
   const descripcionHistorialHoras = ref<string>("");
-  const horas = ref<number>(0);
-  const fechaHistorialHoras = ref<null>(null);
-  const IdUsuarioRegistroHistorial = ref<number>(1);
+  const horas = ref<number>(0.0);
+  const fechaHistorialHoras = ref<string | null>(null);
 
   const selectIdEtapaOportunidad = ref<number>(-1);
   const selectIdCliente = ref<number>(-1);
@@ -168,11 +170,21 @@ export const useOportunidad = () => {
   const nombreMaestraSECTOR = ref<string>("SECTOR");
   const IdVigencia = ref<number>(1);
   const NombreVigencia = ref<string>("");
+  const UsuarioCosteador = ref<string>("");
+  const usuarioHoras = ref<string>("");
+  const activohoras = ref<boolean>(true);
+  const verActualizar = ref<boolean>(false);
+
+  const frontOptionsBack = ref<FrontOption[]>([]);
+  const frontOptionsFront = ref<FrontOption[]>([]);
 
   // Métodos
   const BuscarFiltros = (): void => {
     const filters: InfoFiltro = {
-      idEtapaOportunidad: selectIdEtapaOportunidad.value == 0 ? -1 : selectIdEtapaOportunidad.value,
+      idEtapaOportunidad:
+        selectIdEtapaOportunidad.value == 0
+          ? -1
+          : selectIdEtapaOportunidad.value,
       idCliente: selectIdCliente.value,
       idTipoCliente: selectIdTipoCliente.value,
       idSector: selectIdSector.value == 0 ? -1 : selectIdSector.value,
@@ -192,7 +204,7 @@ export const useOportunidad = () => {
   const addOportinidad = async (
     valorId: number,
     IdEstadoOportunidaval: number,
-    IdVigencia: number,
+    IdVigencia: number
   ): Promise<void> => {
     const infoOportunidad: InfoobjOportunidad = {
       id: valorId,
@@ -207,16 +219,16 @@ export const useOportunidad = () => {
       idSubTipoSolucionFM: selectSUBTIPOSOLUCIONFM.value,
       idUsuarioBack: selectBACK.value,
       idUsuarioFront: 0,
-      idUsuarioEntrega: 0,
+      UsuarioCosteador: UsuarioCosteador.value,
       importe: importe.value,
       marge: margen.value,
       detalle: detalle.value,
       servicio: servicio.value,
       activo: true,
       idUsuarioRegistro: storeAuth.idUsuario,
-      idVigencia : IdVigencia,
+      idVigencia: IdVigencia,
     };
-    
+
     const res: ApiResponse = await store.saveOportunidad(infoOportunidad);
     if (res.code === 200) {
       if (valorId == 0) {
@@ -257,16 +269,39 @@ export const useOportunidad = () => {
     }
   };
 
-  const addHistorialHorasOportunidad = async (ValId: number): Promise<void> => {
+  const getCombosFront = async (IdUsuario: number): Promise<void> => {
+    const res: ApiResponse = await store.getComboFrontBackStore(IdUsuario);
+
+    if (res.code === 200) {
+      frontOptionsFront.value = res.body;
+    } else {
+      console.log("Error al Cargar", res.mensaje);
+    }
+  };
+
+  const getCombosBack = async (IdUsuario: number): Promise<void> => {
+    const res: ApiResponse = await store.getComboFrontBackStore(IdUsuario);
+
+    if (res.code === 200) {
+      frontOptionsBack.value = res.body;
+    } else {
+      console.log("Error al Cargar", res.mensaje);
+    }
+  };
+
+  const addHistorialHorasOportunidad = async (
+    ValId: number,
+    idHistorialHorasupdate: number
+  ): Promise<void> => {
     const objHistorialHorasOportunidad: infoHistorialHorasOportunidad = {
-      id: 0,
+      id: idHistorialHorasupdate,
       descripcion: descripcionHistorialHoras.value,
       idOportunidad: ValId,
       fecha: fechaHistorialHoras.value,
       hora: horas.value,
       usuarioRegistro: storeAuth.idUsuario,
-      IdUsuarioHoras: IdUsuarioRegistroHistorial.value,
-      activo: true,
+      usuarioHoras: usuarioHoras.value,
+      activo: activohoras.value,
     };
 
     const res: ApiResponse = await store.saveHistorialHorasOportunidadStore(
@@ -275,19 +310,90 @@ export const useOportunidad = () => {
     if (res.code === 200) {
       swalSuccess("Se Guardo Correctamente");
       await getHistorialHorasIdOportunidad(ValId);
-      tipoActividad.value = "";
-      descripcionActividad.value = "";
-      fechaActividad.value = null;
+      horas.value = 0;
+      descripcionHistorialHoras.value = "";
+      fechaHistorialHoras.value = null;
+      usuarioHoras.value = "";
+      verActualizar.value = false;
     } else {
       console.log("Error al guardar", res.mensaje);
     }
   };
 
-  const frontOptions = ref<FrontOption[]>([
-    { value: 1, label: "Opción 1" },
-    { value: 2, label: "Opción 2" },
-    { value: 3, label: "Opción 3" },
-  ]);
+  const InactivarHoras = (IdHoras: number) => {
+    const registroFiltrado = listaHistorialHorasOportunidad.value.find(
+      (x: any) => x.id === IdHoras
+    );
+
+    if (registroFiltrado) {
+      activohoras.value = false;
+      horas.value = registroFiltrado.hora;
+      descripcionHistorialHoras.value = registroFiltrado.descripcion;
+      fechaHistorialHoras.value = registroFiltrado.fecha;
+      usuarioHoras.value = registroFiltrado.usuarioHoras;
+      IdHistorialHoras.value = registroFiltrado.id;
+      addHistorialHorasOportunidad(
+        registroFiltrado.idOportunidad,
+        IdHistorialHoras.value
+      );
+    } else {
+      console.error("No se encontró el registro con ID:", IdHoras);
+
+      horas.value = 0;
+      descripcionHistorialHoras.value = "";
+      fechaHistorialHoras.value = null;
+      usuarioHoras.value = "";
+    }
+  };
+
+  
+function formatDateToDDMMYYYY(isoDate: string): string {
+  const date = new Date(isoDate);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+}
+
+function formatDateToYYYYMMDD(dateInput: string | Date | null | undefined): string | null {
+  if (!dateInput) return null;
+  
+  const date = new Date(dateInput);
+  if (isNaN(date.getTime())) return null;
+
+  // Ajuste para timezone local
+  const offset = date.getTimezoneOffset();
+  date.setMinutes(date.getMinutes() + offset);
+
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  
+  return `${year}-${month}-${day}`;
+}
+
+
+  const EditarHoras = (IdHoras: number) => {
+    const registroFiltrado = listaHistorialHorasOportunidad.value.find(
+      (x: any) => x.id === IdHoras
+    );
+
+    if (registroFiltrado) {
+      verActualizar.value = true;
+      horas.value = registroFiltrado.hora;
+      descripcionHistorialHoras.value = registroFiltrado.descripcion;
+      fechaHistorialHoras.value = formatDateToYYYYMMDD(registroFiltrado.fecha);
+      usuarioHoras.value = registroFiltrado.usuarioHoras;
+      IdHistorialHoras.value = registroFiltrado.id;
+    } else {
+      console.error("No se encontró el registro con ID:", IdHoras);
+
+      horas.value = 0;
+      descripcionHistorialHoras.value = "";
+      fechaHistorialHoras.value = null;
+      usuarioHoras.value = "";
+    }
+  };
 
   const getIdOportunidad = async (value: number): Promise<void> => {
     const res: ApiResponse = await store.getIdOportunidadStore(value);
@@ -299,7 +405,7 @@ export const useOportunidad = () => {
       selectMEDIO.value = res.body.idTipoMedio;
       selectUNIDAD.value = res.body.idUnidad;
       selectBACK.value = res.body.idUsuarioBack;
-      selectPERSONAENCARGADA.value = res.body.idusuarioentrega;
+      UsuarioCosteador.value = res.body.usuarioCosteador;
       selectSOLUCIONFM.value = res.body.idTipoSolucionFm;
       selectSUBTIPOSOLUCIONFM.value = res.body.idSubTipoSolucionFm;
       importe.value = res.body.importe;
@@ -391,7 +497,8 @@ export const useOportunidad = () => {
     nombreComboDinamico,
     nombreBusqueda,
     disabled,
-    frontOptions,
+    frontOptionsBack,
+    frontOptionsFront,
     placeholder,
     IdMaestraFUENTEORIGEN,
     IdMaestraPROSPECCION,
@@ -434,7 +541,7 @@ export const useOportunidad = () => {
     descripcionHistorialHoras,
     horas,
     fechaHistorialHoras,
-    IdUsuarioRegistroHistorial,
+    usuarioHoras,
     listaHistorialHorasOportunidad,
     selectIdEtapaOportunidad,
     selectIdCliente,
@@ -449,6 +556,9 @@ export const useOportunidad = () => {
     nombreMaestraSUBESTADO,
     IdVigencia,
     NombreVigencia,
+    UsuarioCosteador,
+    IdHistorialHoras,
+    verActualizar,
     // Métodos
     ListOportunidades,
     routerAddOportunidad,
@@ -463,6 +573,10 @@ export const useOportunidad = () => {
     getPage: (page: number) => {
       store.setPage(page);
     },
+    getCombosFront,
+    getCombosBack,
+    EditarHoras,
+    InactivarHoras,
   };
 };
 

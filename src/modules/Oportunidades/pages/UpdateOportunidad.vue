@@ -57,12 +57,21 @@ const {
   addHistorialHorasOportunidad,
   NombreVigencia,
   IdVigencia,
+  frontOptionsBack,
+  getCombosBack,
+  UsuarioCosteador,
+  usuarioHoras,
+  EditarHoras,
+  InactivarHoras,
+  IdHistorialHoras,
+  verActualizar,
 } = useOportunidad();
 
 onMounted(async () => {
   await getIdOportunidad(
     parseInt(router.currentRoute.value.params.id.toString())
   );
+  getCombosBack(1093);
 });
 
 function formatDateToDDMMYYYY(isoDate: string): string {
@@ -172,8 +181,11 @@ function calcularTiempo(Fecha: string | Date): string {
 // Computed para sumar horas
 const sumahoras = computed(() => {
   // Verificación de seguridad
-  if (!listaHistorialHorasOportunidad.value || listaHistorialHorasOportunidad.value.length === 0) {
-    return '0.00';
+  if (
+    !listaHistorialHorasOportunidad.value ||
+    listaHistorialHorasOportunidad.value.length === 0
+  ) {
+    return "0.00";
   }
 
   let totalHoras = 0;
@@ -181,11 +193,12 @@ const sumahoras = computed(() => {
 
   listaHistorialHorasOportunidad.value.forEach((item) => {
     // Convertir el número a string y separar parte entera y decimal
-    const [horasStr, minutosStr] = item.hora.toString().split('.');
-    
+    const [horasStr, minutosStr] = item.hora.toString().split(".");
+
     const horas = Number(horasStr) || 0;
     // Tomar solo los primeros dos dígitos de los minutos para casos como 1.5 (50 minutos)
-    const minutos = Number((minutosStr || '0').padEnd(2, '0').substring(0, 2)) || 0;
+    const minutos =
+      Number((minutosStr || "0").padEnd(2, "0").substring(0, 2)) || 0;
 
     totalHoras += horas;
     totalMinutos += minutos;
@@ -196,12 +209,12 @@ const sumahoras = computed(() => {
   totalMinutos = totalMinutos % 60;
 
   // Formatear el resultado con dos dígitos en minutos
-  return `${totalHoras}.${totalMinutos.toString().padStart(2, '0')}`;
+  return `${totalHoras}.${totalMinutos.toString().padStart(2, "0")}`;
 });
 
 // Opcional: Computed para mostrar en formato legible
 const horasFormateadas = computed(() => {
-  const [horas, minutos] = sumahoras.value.split('.');
+  const [horas, minutos] = sumahoras.value.split(".");
   return `${horas}h ${minutos}m`;
 });
 </script>
@@ -215,14 +228,20 @@ const horasFormateadas = computed(() => {
         class="d-flex justify-content-between align-items-center mb-15 mb-lg-20"
       >
         <h5 class="card-title fw-bold mb-0">
-          {{NombreVigencia}} - {{ NombreEstadoOportunidad }}
+          {{ NombreVigencia }} - {{ NombreEstadoOportunidad }}
         </h5>
         <div class="d-flex gap-2">
           <!-- gap-1, gap-2 o gap-3 para diferentes espacios -->
           <button
             class="default-btn transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-12 pb-md-12 ps-md-30 pe-md-30 rounded-1 bg-success fs-md-15 fs-lg-16"
             type="button"
-            @click="addOportinidad(parseInt(router.currentRoute.value.params.id.toString()),IdEstadoOportunidad,2)"
+            @click="
+              addOportinidad(
+                parseInt(router.currentRoute.value.params.id.toString()),
+                IdEstadoOportunidad,
+                2
+              )
+            "
             v-if="NombreVigencia != 'Concluido'"
           >
             CONCLUIDO
@@ -238,7 +257,10 @@ const horasFormateadas = computed(() => {
       </div>
 
       <!-- Botones de estado -->
-      <div class="mb-3 d-flex flex-wrap gap-2" v-if="NombreVigencia != 'Concluido'">
+      <div
+        class="mb-3 d-flex flex-wrap gap-2"
+        v-if="NombreVigencia != 'Concluido'"
+      >
         <!-- Botón de siguiente estado (solo si no es el último estado) -->
         <div v-if="estadoSiguiente">
           <button
@@ -405,29 +427,52 @@ const horasFormateadas = computed(() => {
                         </div>
 
                         <div class="col-md-4">
-                          <ComboDinamico
-                            :idMaestra="IdMaestraBACK"
-                            :nombreMaestra="nombreMaestraBACK"
-                            v-model:seleccionado="selectBACK"
-                            :disabled="disabled"
-                            :placeholder="placeholder"
-                            :required="true"
+                          <label
+                            for="select-maestra"
+                            class="form-label fw-medium"
                           >
-                          </ComboDinamico>
+                            Back
+                          </label>
+                          <select
+                            class="form-select shadow-none fs-md-15 text-black"
+                            id="validationCustomFront"
+                            v-model="selectBACK"
+                            required
+                            :disabled="true"
+                          >
+                            <option selected disabled value="0">
+                              Seleccionar...
+                            </option>
+                            <option
+                              v-for="option in frontOptionsBack"
+                              :key="option.id"
+                              :value="option.id"
+                            >
+                              {{ option.usuario }}
+                            </option>
+                          </select>
+                          <div class="invalid-feedback">
+                            Por favor selecciona una opción válida.
+                          </div>
                         </div>
                       </div>
 
                       <div class="row g-3">
                         <div class="col-md-4">
-                          <ComboDinamico
-                            :idMaestra="IdMaestraPERSONAENCARGADA"
-                            :nombreMaestra="nombreMaestraPERSONAENCARGADA"
-                            v-model:seleccionado="selectPERSONAENCARGADA"
-                            :disabled="disabled"
-                            :placeholder="placeholder"
-                            :required="true"
+                          <label
+                            for="buscarCliente"
+                            class="form-label fw-medium"
+                            >Responsable de costeo</label
                           >
-                          </ComboDinamico>
+                          <div class="input-group">
+                            <input
+                              type="text"
+                              class="form-control shadow-none fs-md-15 text-black"
+                              id="UsuarioCosteador"
+                              v-model="UsuarioCosteador"
+                              :disabled="true"
+                            />
+                          </div>
                         </div>
 
                         <div class="col-md-4">
@@ -587,7 +632,10 @@ const horasFormateadas = computed(() => {
                             v-model="fechaActividad"
                           />
                         </div>
-                        <div class="col-md-4" v-if="NombreVigencia != 'Concluido'">
+                        <div
+                          class="col-md-4"
+                          v-if="NombreVigencia != 'Concluido'"
+                        >
                           <button
                             class="default-btn transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-12 pb-md-12 ps-md-30 pe-md-30 rounded-1 bg-success fs-md-15 fs-lg-16"
                             type="button"
@@ -700,11 +748,11 @@ const horasFormateadas = computed(() => {
                   />
                 </div>
                 <div class="col-md-3">
-                  <label class="form-label fw-medium">Horas</label>
+                  <label class="form-label fw-medium">Horas 0h.00m</label>
                   <input
                     type="number"
                     class="form-control shadow-none"
-                    placeholder="0.00"
+                    placeholder="0h.00m"
                     v-model="horas"
                   />
                 </div>
@@ -723,19 +771,31 @@ const horasFormateadas = computed(() => {
                     type="text"
                     class="form-control shadow-none"
                     placeholder="Descripción de la actividad"
-                    v-model="descripcionHistorialHoras"
+                    v-model="usuarioHoras"
                   />
                 </div>
                 <div class="col-md-2 d-flex align-items-end">
                   <button
+                  v-if="!verActualizar"
                     class="btn btn-success"
                     @click="
                       addHistorialHorasOportunidad(
-                        parseInt(router.currentRoute.value.params.id.toString())
+                        parseInt(router.currentRoute.value.params.id.toString()),0
                       )
                     "
                   >
                     Agregar
+                  </button>
+                  <button
+                  v-if="verActualizar"
+                    class="btn btn-success"
+                    @click="
+                      addHistorialHorasOportunidad(
+                        parseInt(router.currentRoute.value.params.id.toString()),IdHistorialHoras
+                      )
+                    "
+                  >
+                    Actualizar
                   </button>
                 </div>
               </div>
@@ -753,28 +813,33 @@ const horasFormateadas = computed(() => {
                     </tr>
                   </thead>
                   <tbody>
-                    <tr v-for="historialhoras in listaHistorialHorasOportunidad" :key="historialhoras.id"> 
-                      <td>{{formatDateToDDMMYYYY(historialhoras.fecha)}}</td>
-                      <td>{{historialhoras.hora}}</td>
-                      <td>{{historialhoras.descripcion}}</td>
-                      <td>admin</td>
+                    <tr
+                      v-for="historialhoras in listaHistorialHorasOportunidad"
+                      :key="historialhoras.id"
+                    >
+                      <td>{{ formatDateToDDMMYYYY(historialhoras.fecha) }}</td>
+                      <td>{{ historialhoras.hora }}</td>
+                      <td>{{ historialhoras.descripcion }}</td>
+                      <td>{{ historialhoras.usuarioHoras }}</td>
                       <td>
-                        <button class="btn btn-sm btn-outline-primary me-2">
+                        <button class="btn btn-sm btn-outline-primary me-2" @click="EditarHoras(historialhoras.id)">
                           Editar
                         </button>
-                        <button class="btn btn-sm btn-outline-danger">
+                        <button class="btn btn-sm btn-outline-danger" @click="InactivarHoras(historialhoras.id)">
                           Eliminar
                         </button>
                       </td>
                     </tr>
-               
                   </tbody>
                 </table>
               </div>
 
               <!-- Resumen total -->
               <div class="mt-4 text-end">
-                <h5>Total de horas registradas: <strong>{{horasFormateadas}}</strong></h5>
+                <h5>
+                  Total de horas registradas:
+                  <strong>{{ horasFormateadas }}</strong>
+                </h5>
               </div>
             </div>
           </div>

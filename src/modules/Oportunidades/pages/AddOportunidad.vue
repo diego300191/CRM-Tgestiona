@@ -42,15 +42,18 @@ const {
   detalle,
   servicio,
   opcionesSubTipo,
+  UsuarioCosteador,
   addOportinidad,
   ListOportunidades,
+  getCombosBack,
+  frontOptionsBack,
 } = useOportunidad();
 
 onMounted(() => {
   nombrecliente.value = "";
   selectedClientId.value = 0;
+  getCombosBack(1093);
 });
-
 </script>
 
 <template>
@@ -61,14 +64,12 @@ onMounted(() => {
       <div
         class="d-flex justify-content-between align-items-center mb-15 mb-lg-20"
       >
-        <h5 class="card-title fw-bold mb-0">
-          Pendiente
-        </h5>
+        <h5 class="card-title fw-bold mb-0">Pendiente</h5>
         <div class="d-flex gap-2">
           <button
             class="default-btn transition border-0 fw-medium text-white pt-11 pb-11 ps-25 pe-25 pt-md-12 pb-md-12 ps-md-30 pe-md-30 rounded-1 bg-success fs-md-15 fs-lg-16"
             type="button"
-            @click="addOportinidad(0,1,1)"
+            @click="addOportinidad(0, 1, 1)"
           >
             GUARDAR
           </button>
@@ -81,8 +82,6 @@ onMounted(() => {
           </button>
         </div>
       </div>
-
-     
 
       <form class="row g-3 needs-validation" novalidate>
         <div class="row g-3">
@@ -160,31 +159,44 @@ onMounted(() => {
           </div>
 
           <div class="col-md-4">
-            <ComboDinamico
-              :idMaestra="IdMaestraBACK"
-              :nombreMaestra="nombreMaestraBACK"
-              v-model:seleccionado="selectBACK"
-              :disabled="false"
-              :placeholder="placeholder"
-              :required="true"
+            <label for="select-maestra" class="form-label fw-medium">
+              Back
+            </label>
+            <select
+              class="form-select shadow-none fs-md-15 text-black"
+              id="validationCustomFront"
+              v-model="selectBACK"
+              required
             >
-            </ComboDinamico>
+              <option selected disabled value="0">Seleccionar...</option>
+              <option
+                v-for="option in frontOptionsBack"
+                :key="option.id"
+                :value="option.id"
+              >
+                {{ option.usuario }}
+              </option>
+            </select>
+            <div class="invalid-feedback">
+              Por favor selecciona una opción válida.
+            </div>
           </div>
         </div>
 
         <div class="row g-3">
           <div class="col-md-4">
-            <ComboDinamico
-              :idMaestra="IdMaestraPERSONAENCARGADA"
-              :nombreMaestra="nombreMaestraPERSONAENCARGADA"
-              v-model:seleccionado="selectPERSONAENCARGADA"
-              :disabled="false"
-              :placeholder="placeholder"
-              :required="true"
+            <label for="buscarCliente" class="form-label fw-medium"
+              >Responsable de costeo</label
             >
-            </ComboDinamico>
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control shadow-none fs-md-15 text-black"
+                id="UsuarioCosteador"
+                v-model="UsuarioCosteador"
+              />
+            </div>
           </div>
-
           <div class="col-md-4">
             <ComboDinamico
               :idMaestra="IdMaestraSOLUCIONFM"

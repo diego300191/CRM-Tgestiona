@@ -63,8 +63,8 @@ const swalSuccess = (message: string): void => {
 };
 
 interface FrontOption {
-  value: number;
-  label: string;
+  id: number;
+  usuario: string;
 }
 
 // Stores
@@ -163,6 +163,7 @@ export const useCliente = () => {
   const selectSECTOR = ref<number>(-1);
   const showmodal = ref<boolean>(false);
   const selectTipoCliente = ref<number>(-1);
+  const frontOptions = ref<FrontOption[]>([]);
   
   type ClienteType = "actual" | "nuevo";
 
@@ -237,28 +238,23 @@ export const useCliente = () => {
     }
   };
 
-  const frontOptions = ref<FrontOption[]>([
-    { value: 1, label: "Opción 1" },
-    { value: 2, label: "Opción 2" },
-    { value: 3, label: "Opción 3" },
-  ]);
+
+    const getCombosFront = async (IdUsuario: number): Promise<void> => {
+    const res: ApiResponse = await store.getComboFrontBackStore(IdUsuario);
+
+    if (res.code === 200) {
+      frontOptions.value = res.body;
+    } else {
+      console.log("Error al Cargar", res.mensaje);
+    }
+  };
+
+  
 
   const LogAcciones = (): void => {
     showmodal.value = true;
   };
 
-  //   const getIdCliente = (value: string): void => {
-  //     store.getCliente(parseInt(value)).then((data: Cliente) => {
-  //       idEmpresa.value = [data.idEmpresa];
-  //       idTipoSucursal.value = data.idTipoSucursal;
-  //       selected.value = data.idTipoSucursal;
-  //       nombre.value = data.nombre;
-  //       telefono.value = data.telefono;
-  //       direccion.value = data.direccion;
-  //       codigoEstablecimiento.value = data.codigoEstablecimiento;
-  //       activo.value = data.activo;
-  //     });
-  //   };
 
   const ListClientees = (): void => {
     router.push({ name: "administracion-listClientees" });
@@ -332,6 +328,7 @@ export const useCliente = () => {
     getPage: (page: number) => {
       store.setPage(page);
     },
+    getCombosFront,
   };
 };
 

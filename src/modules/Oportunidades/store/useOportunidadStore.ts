@@ -21,6 +21,7 @@ export const useOportunidaStore = defineStore("useOportunidad", () => {
   const changeSolucionFM = ref<number>(0);
   const opcionesSubTipo = ref<MaestraItem[]>([]);
   const IdEstadoOportunidad = ref<number>(0);
+  const IdHistorialHoras = ref<number>(0);
 
   // Acciones
   const setOportunidades = (
@@ -46,6 +47,18 @@ export const useOportunidaStore = defineStore("useOportunidad", () => {
       return data;
     } catch (error) {
       console.error("Error al guardar Oportunidad:", error);
+      throw error;
+    }
+  };
+
+      const getComboFrontBackStore = async (IdUsuario: number): Promise<any> => {
+    try {
+      const { data }: AxiosResponse = await api.get(
+        `/Common/ObtenerTipoUsuario/${IdUsuario}`
+      );
+      return data;
+    } catch (error) {
+      console.error("Error al obtener el Data:", error);
       throw error;
     }
   };
@@ -171,6 +184,7 @@ export const useOportunidaStore = defineStore("useOportunidad", () => {
     changeSolucionFM,
     opcionesSubTipo,
     IdEstadoOportunidad,
+    IdHistorialHoras,
     // Actions
     setOportunidades,
     setPage,
@@ -182,5 +196,6 @@ export const useOportunidaStore = defineStore("useOportunidad", () => {
     getActividadIdOportunidadStore,
     saveHistorialHorasOportunidadStore,
     getHistorialHorasIdOportunidadStore,
+    getComboFrontBackStore,
   };
 });

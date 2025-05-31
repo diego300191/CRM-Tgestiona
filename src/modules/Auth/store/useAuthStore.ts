@@ -104,7 +104,7 @@ export const useAuthStore = defineStore("Auth", {
       this.isAuthenticated = false;
       this.idUsuario = data.idUsuario || 0;
       localStorage.clear();
-      router.push({ name: "Home" });
+      router.push({ path: "/login" });
     },
 
     setData(data: LoginResponse) {

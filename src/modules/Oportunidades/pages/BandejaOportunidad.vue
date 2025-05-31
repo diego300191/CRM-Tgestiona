@@ -3,7 +3,8 @@ import PaginationNumbers from "@/components/Personalizados/PaginationNumbers.vue
 import ComboDinamico from "@/components/Personalizados/ComboDinamico.vue";
 import LoadingModal from "@/components/Personalizados/LoadingModal.vue";
 import useOportunidad from "@/modules/Oportunidades/composables/useOportunidad";
-import { ref } from "vue";
+import { onMounted,ref } from "vue";
+
 
 const {
   routerAddOportunidad,
@@ -28,6 +29,10 @@ const {
   placeholder,
   getPage,
   BuscarFiltros,
+  getCombosFront,
+  getCombosBack,
+  frontOptionsBack,
+  frontOptionsFront,
 } = useOportunidad();
 
 // Variables para el ordenamiento
@@ -59,6 +64,10 @@ const handleSearch = (e: Event) => {
   e.preventDefault();
   BuscarFiltros();
 };
+onMounted(() => {
+  getCombosBack(1092);
+  getCombosFront(1093);
+});
 </script>
 
 
@@ -94,11 +103,20 @@ const handleSearch = (e: Event) => {
                 <label for="select-maestra" class="form-label fw-medium">
                   Back
                 </label>
-                <select id="select-maestra" class="form-select shadow-none fs-md-15 rounded-1 border-1"
-                  v-model="selectIdBack" :disabled="false">
-                  <option :value="-1" class="text-muted">Seleccionar....</option>
-                  <option :value="1" class="text-muted">Cliente Actual</option>
-                  <option :value="2" class="text-muted">Cliente Nuevo</option>
+                <select
+                  class="form-select shadow-none fs-md-15 text-black"
+                  id="validationCustomFront"
+                  v-model="selectIdBack"
+                  required
+                >
+                  <option selected disabled value=-1>Seleccionar...</option>
+                  <option
+                    v-for="option in frontOptionsBack"
+                    :key="option.id"
+                    :value="option.id"
+                  >
+                    {{ option.usuario }}
+                  </option>
                 </select>
                 <div class="invalid-feedback">
                   Por favor selecciona una opción válida.
@@ -112,11 +130,20 @@ const handleSearch = (e: Event) => {
                 <label for="select-maestra" class="form-label fw-medium">
                   Front
                 </label>
-                <select id="select-maestra" class="form-select shadow-none fs-md-15 rounded-1 border-1"
-                  v-model="selectIdFront" :disabled="false">
-                  <option :value="-1" class="text-muted">Seleccionar....</option>
-                  <option :value="1" class="text-muted">Cliente Actual</option>
-                  <option :value="2" class="text-muted">Cliente Nuevo</option>
+                <select
+                  class="form-select shadow-none fs-md-15 text-black"
+                  id="validationCustomFront"
+                  v-model="selectIdFront"
+                  required
+                >
+                  <option selected disabled value=-1>Seleccionar...</option>
+                  <option
+                    v-for="option in frontOptionsFront"
+                    :key="option.id"
+                    :value="option.id"
+                  >
+                    {{ option.usuario }}
+                  </option>
                 </select>
                 <div class="invalid-feedback">
                   Por favor selecciona una opción válida.
