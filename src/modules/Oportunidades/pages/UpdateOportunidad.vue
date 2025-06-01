@@ -71,7 +71,7 @@ onMounted(async () => {
   await getIdOportunidad(
     parseInt(router.currentRoute.value.params.id.toString())
   );
-  getCombosBack(1093);
+  getCombosBack(1092);
 });
 
 function formatDateToDDMMYYYY(isoDate: string): string {

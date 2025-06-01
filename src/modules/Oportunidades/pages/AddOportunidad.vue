@@ -52,7 +52,7 @@ const {
 onMounted(() => {
   nombrecliente.value = "";
   selectedClientId.value = 0;
-  getCombosBack(1093);
+  getCombosBack(1092);
 });
 </script>
 

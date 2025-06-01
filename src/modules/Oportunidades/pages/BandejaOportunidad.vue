@@ -254,10 +254,10 @@ onMounted(() => {
                     {{ oportunidad.etapaOportunidad }}
                   </td>
                   <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                    back
+                    {{oportunidad.usuarioBack}}
                   </td>
                   <td class="shadow-none lh-1 fw-medium text-black-emphasis">
-                    front
+                    {{oportunidad.usuarioFront}}
                   </td>
                   <td class="shadow-none lh-1 fw-medium text-black-emphasis">
                     {{ oportunidad.telefonoContacto }}
