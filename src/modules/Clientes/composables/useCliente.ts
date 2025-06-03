@@ -216,7 +216,7 @@ export const useCliente = () => {
     const res: ApiResponse = await store.saveCliente(infoCliente);
     if (res.code === 200) {
       swalSuccess("Se Guardo Correctamente");
-      router.push({ name: "administracion-listClientees" });
+      router.push({ name: "cliente-ClienteComponent" });
     } else {
       console.log("Error al guardar", res.mensaje);
     }
