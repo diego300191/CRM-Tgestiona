@@ -7,7 +7,7 @@ interface CustomAxiosRequestConfig extends AxiosRequestConfig {
   source?: string;
 }
 const Api: AxiosInstance = axios.create({
-  baseURL: process.env.VUE_APP_API_URL || "https://localhost:7122/", // Fallback a local si no se define
+  baseURL:  "https://localhost:7122/", // Fallback a local si no se define
   headers: {
     "Content-Type": "application/json; charset=utf-8",
   },
